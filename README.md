@@ -7,3 +7,28 @@ The goal of the project is to implement the IETS's RFC for CoAP publish-subscrib
 You can follow along our Project progress here: https://sites.google.com/view/team-multicast/home
 
 This project was moved to a new repository: https://github.com/wajd/TeamMulticast-CoAP-PubSub 
+
+
+
+
+
+
+
+
+
+
+
+
+Git instructions for team:
+
+- When working on a story/task, make sure you're on the master branch first, then:
+```
+git pull origin master
+git checkout -b [name of task] 
+```
+
+- When the task is COMPLETELY done and you want to merge it into master, make sure you're on your branch, then:
+```
+git rebase origin/master
+```
+Make sure the code in your branch compiles/tests/works then do a pull request.
