@@ -1,7 +1,7 @@
-import org.eclipse.californium.core.*;
-import org.eclipse.californium.core.coap.CoAP;
+import org.eclipse.californium.core.CoapClient;
+import org.eclipse.californium.core.CoapHandler;
+import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.Request;
-import org.eclipse.californium.core.coap.Response;
 
 
 public class PubSub {
@@ -41,15 +41,15 @@ public class PubSub {
         client.delete();
     }
     public static void subscribe(String host, int port, String path ){
-
-        Request request = new Request(CoAP.Code.GET);
+        CoapClient client = new CoapClient("coap", host, port,path);
+        Request request = Request.newGet();
         request.setObserve();
-        request.setURI("coap://"+host+":"+port+"/"+path);
-        request.send();
-        while (true){
-        Response response = request.getResponse();
-        System.out.println(response.toString());
-        }
-
+        client.observeAndWait(request, new CoapHandler() {
+            @Override public void onLoad(CoapResponse resp) {
+                System.out.println(resp.toString());
+            }
+            @Override public void onError(){
+                System.err.println("FAILED");
+            }});
     }
 }

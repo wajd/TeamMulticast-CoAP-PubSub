@@ -5,7 +5,8 @@
     private int ct;
 
     public Topic(){
-
+name = "topic";
+path = null;
     }
     public Topic();
 }*/

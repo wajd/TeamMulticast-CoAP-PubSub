@@ -25,7 +25,10 @@ public class main {
         /*PubSub.create("127.0.0.1",5683,5000,"ps","topic1",40);
         PubSub.create("127.0.0.1",5683,5000,"ps/topic1","topic2",0); */
 
-       PubSub.subscribe("127.0.0.1", 5683, "ps/topic1/topic2");
+       PubSub.discover("130.229.135.28",5683, 5000, ".well-known/core");
+        PubSub.read("130.229.135.28", 5683, "ps/topic1/topic2");
+       PubSub.subscribe("130.229.135.28", 5683, "ps/topic1/topic2");
+
 
     }
 }
