@@ -1,4 +1,7 @@
 import org.eclipse.californium.core.*;
+import org.eclipse.californium.core.coap.CoAP;
+import org.eclipse.californium.core.coap.Request;
+import org.eclipse.californium.core.coap.Response;
 
 
 public class PubSub {
@@ -39,6 +42,14 @@ public class PubSub {
     }
     public static void subscribe(String host, int port, String path ){
 
-        CoapObserveRelation client = new CoapObserveRelation()
+        Request request = new Request(CoAP.Code.GET);
+        request.setObserve();
+        request.setURI("coap://"+host+":"+port+"/"+path);
+        request.send();
+        while (true){
+        Response response = request.getResponse();
+        System.out.println(response.toString());
+        }
+
     }
 }
