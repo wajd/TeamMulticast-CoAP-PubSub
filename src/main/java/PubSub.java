@@ -1,7 +1,6 @@
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapHandler;
 import org.eclipse.californium.core.CoapResponse;
-import org.eclipse.californium.core.coap.Request;
 
 
 public class PubSub {
@@ -41,15 +40,22 @@ public class PubSub {
         client.delete();
     }
     public static void subscribe(String host, int port, String path ){
-        CoapClient client = new CoapClient("coap", host, port,path);
-        Request request = Request.newGet();
-        request.setObserve();
-        client.observeAndWait(request, new CoapHandler() {
-            @Override public void onLoad(CoapResponse resp) {
-                System.out.println(resp.toString());
+        CoapClient client = new CoapClient("127.0.0.1/ps/topic55");
+
+        CoapHandler handler = new CoapHandler() {
+            @Override
+            public void onLoad(CoapResponse coapResponse) {
+                System.out.println(coapResponse.getResponseText());
             }
-            @Override public void onError(){
-                System.err.println("FAILED");
-            }});
+
+            @Override
+            public void onError() {
+
+            }
+        };
+
+        client.observe(handler);
+        while (true);
+
     }
 }
