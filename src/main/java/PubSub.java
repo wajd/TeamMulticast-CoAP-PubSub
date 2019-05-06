@@ -1,6 +1,10 @@
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapHandler;
+import org.eclipse.californium.core.CoapObserveRelation;
 import org.eclipse.californium.core.CoapResponse;
+import org.eclipse.californium.core.coap.Request;
+import org.eclipse.californium.core.coap.Response;
+import org.eclipse.californium.core.observe.NotificationListener;
 
 
 public class PubSub {
@@ -17,8 +21,8 @@ public class PubSub {
 
     public static void create(String host, int port, long timeout, String path, String name, int ct){
         CoapClient client = new CoapClient("coap", host, port,path);
-    StringBuilder sb = new StringBuilder().append("<").append(name).append(">;ct=").append(ct);
-    String payload = sb.toString();
+        StringBuilder sb = new StringBuilder().append("<").append(name).append(">;ct=").append(ct);
+        String payload = sb.toString();
         CoapResponse resp = client.post(payload,0);
         System.out.println(resp.isSuccess());
         System.out.println(resp.getResponseText());
@@ -39,9 +43,8 @@ public class PubSub {
         CoapClient client = new CoapClient("coap", host, port,path);
         client.delete();
     }
-    public static void subscribe(String host, int port, String path ){
-        CoapClient client = new CoapClient("127.0.0.1/ps/topic55");
-
+    public static void subscribe(String host, int port, String path){
+        CoapClient client = new CoapClient("coap",host, port, path);
         CoapHandler handler = new CoapHandler() {
             @Override
             public void onLoad(CoapResponse coapResponse) {
@@ -50,11 +53,12 @@ public class PubSub {
 
             @Override
             public void onError() {
-
+                System.out.println("ERROR");
             }
         };
 
         client.observe(handler);
+
         while (true);
 
     }
