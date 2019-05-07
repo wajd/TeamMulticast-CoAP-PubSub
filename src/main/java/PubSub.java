@@ -38,16 +38,19 @@ public class PubSub {
     }
 
     /* Returns Content */
-    public static void read(String host, int port, String path) {
-        CoapClient client = new CoapClient("coap", host, port, path);
+    public static String read(String host, int port, Topic topic) {
+        CoapClient client = new CoapClient("coap", host, port, topic.getPath());
         String data = client.get().getResponseText();
-        System.out.println(data);
+
+        return data;
     }
 
     /* Returns Confirmation Code */
-    public static void remove(String host, int port, String path) {
-        CoapClient client = new CoapClient("coap", host, port, path);
-        client.delete();
+    public static CoAP.ResponseCode remove(String host, int port, Topic topic) {
+        CoapClient client = new CoapClient("coap", host, port, topic.getPath());
+        CoapResponse resp =client.delete();
+
+        return CoAP.ResponseCode.valueOf(resp.getCode().value);
     }
     public static void subscribe(String host, int port, String path){
         CoapClient client = new CoapClient("coap",host, port, path);
