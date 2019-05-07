@@ -2,12 +2,8 @@ import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapHandler;
 import org.eclipse.californium.core.CoapObserveRelation;
 import org.eclipse.californium.core.CoapResponse;
-import org.eclipse.californium.core.coap.Request;
-import org.eclipse.californium.core.coap.Response;
-import org.eclipse.californium.core.observe.NotificationListener;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.concurrent.TimeUnit;
+import org.eclipse.californium.core.coap.CoAP;
+
 
 public class PubSub {
 
@@ -25,18 +21,20 @@ public class PubSub {
     }
 
     /* Returns Confirmation Code */
-    public static void create(String host, int port, String path, Topic topic) {
+    public static CoAP.ResponseCode create(String host, int port, String path, Topic topic) {
         CoapClient client = new CoapClient("coap", host, port, path);
         String payload = topic.makeCreate();
         CoapResponse resp = client.post(payload, 0);
-        System.out.println(resp.isSuccess());
-        System.out.println(resp.getResponseText());
+
+        return CoAP.ResponseCode.valueOf(resp.getCode().value);
     }
 
     /* Returns Confirmation Code */
-    public static void publish(String host, int port, String path, String payload, int ct) {
-        CoapClient client = new CoapClient("coap", host, port, path);
-        client.put(payload, ct);
+    public static CoAP.ResponseCode publish(String host, int port, Topic topic, String payload) {
+        CoapClient client = new CoapClient("coap", host, port, topic.getPath());
+        CoapResponse resp = client.put(payload, topic.getCt());
+
+        return CoAP.ResponseCode.valueOf(resp.getCode().value);
     }
 
     /* Returns Content */
@@ -66,7 +64,6 @@ public class PubSub {
         };
         client.observe(handler);
         while (true) ;
-
     }
     public static void fakeSubscribe(String host, int port, String path) throws InterruptedException {
 

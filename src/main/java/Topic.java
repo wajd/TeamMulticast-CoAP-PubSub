@@ -8,7 +8,8 @@ public class Topic {
     public Topic(String format) {
         String[] small = format.split(";");
         this.ct = Integer.parseInt(small[1].substring(small[1].indexOf('=') + 1));
-        this.path = small[0].replace('<', ' ').replace('>', ' ').trim();
+        String p = small[0].replace('<', ' ').replace('>', ' ').trim();
+        this.path = p.substring(p.indexOf('/') + 1);
         this.name = path.substring(this.path.lastIndexOf('/') + 1);
     }
 
