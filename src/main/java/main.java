@@ -1,6 +1,6 @@
 public class main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
 
         String host = "127.0.0.1";
         int port = 5683;
@@ -8,14 +8,14 @@ public class main {
 
         PubSub.discover(host,port, timeout, ".well-known/core");
 
-//        PubSub.create(host, port, timeout, "ps/", "topic1", 40);
-//        PubSub.create(host, port, timeout , "ps/topic1", "topic2", 0);
-//
-//        PubSub.discover(host,port, timeout, ".well-known/core");
-//
-//        PubSub.publish(host, port, "ps/topic1/topic2", "500", 0);
-//        PubSub.read(host, port, "ps/topic1/topic2");
+        PubSub.create(host, port, timeout, "ps/", "topic", 0);
 
-        PubSub.subscribe(host, port, "ps/topic1/topic2");
+        PubSub.discover(host,port, timeout, ".well-known/core");
+
+        PubSub.publish(host, port, "ps/topic", "500", 0);
+
+        PubSub.read(host, port, "ps/topic");
+
+        PubSub.fakeSubscribe(host, port, "ps/topic");
     }
 }
