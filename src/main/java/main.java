@@ -4,7 +4,7 @@ public class main {
 
     public static void main(String[] args) throws InterruptedException {
 
-        String host = "130.229.160.206";
+        String host = "127.0.0.1";
         int port = 5683;
         long timeout = 5000;
 
@@ -12,19 +12,12 @@ public class main {
         Topic[] topics = PubSub.discover(host, port, timeout, "/.well-known/core");
 
         System.out.println();
-        System.out.println("FOUND " + topics.length + " TOPICS:");
-        for (int i = 0; i < topics.length; i++) {
-            System.out.println();
-            System.out.println(topics[i].makeURI());
-            System.out.println("Name:           " + topics[i].getName());
-            System.out.println("Path:           " + topics[i].getPath());
-            System.out.println("Content type:   " + topics[i].getCt());
-        }
+        printDiscover(topics);
         System.out.println();
 
 
         System.out.println("Create topic1 in ps: ");
-        CoAP.ResponseCode code = PubSub.create(host, port, "ps", new Topic("topic1", 40));
+        CoAP.ResponseCode code = PubSub.create(host, port, "ps/", new Topic("topic1", 40));
         if (code == CoAP.ResponseCode.CREATED) {
             System.out.println("CREATED");
         }
@@ -41,14 +34,7 @@ public class main {
         topics = PubSub.discover(host, port, timeout,"/.well-known/core");
 
         System.out.println();
-        System.out.println("FOUND " + topics.length + " TOPICS:");
-        for (int i = 0; i < topics.length; i++) {
-            System.out.println();
-            System.out.println(topics[i].makeURI());
-            System.out.println("Name:           " + topics[i].getName());
-            System.out.println("Path:           " + topics[i].getPath());
-            System.out.println("Content type:   " + topics[i].getCt());
-        }
+        printDiscover(topics);
         System.out.println();
 
 
@@ -73,15 +59,21 @@ public class main {
         System.out.println();
 
         System.out.println("We discover again:");
-        topics = PubSub.discover(host, port, timeout, "/.well-known/core");
-        System.out.println("FOUND " + topics.length + " TOPICS:");
-        for (int i = 0; i < topics.length; i++) {
-            System.out.println();
-            System.out.println(topics[i].makeURI());
-            System.out.println("Name:           " + topics[i].getName());
-            System.out.println("Path:           " + topics[i].getPath());
-            System.out.println("Content type:   " + topics[i].getCt());
-        }
+        topics = PubSub.discover(host, port, timeout, ".well-known/core");
+        System.out.println();
+        printDiscover(topics);
+        System.out.println();
 
+    }
+
+    private static void printDiscover(Topic[] topics) {
+        System.out.println("FOUND " + topics.length + " TOPICS:");
+        for (Topic topic : topics) {
+            System.out.println();
+            System.out.println(topic.toString());
+            System.out.println("Name:           " + topic.getName());
+            System.out.println("Path:           " + topic.getPathAsString());
+            System.out.println("Content type:   " + topic.getCt());
+        }
     }
 }
