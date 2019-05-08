@@ -63,6 +63,9 @@ public class main {
         System.out.println();
         printDiscover(topics);
         System.out.println();
+        
+        System.out.println("Fake subscribe:");
+        PubSub.fakeSubscribe(host, port, "ps/topic");
 
     }
 
