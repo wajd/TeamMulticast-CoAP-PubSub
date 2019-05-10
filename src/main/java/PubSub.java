@@ -66,8 +66,10 @@ public class PubSub {
     public static String read(String host, int port, Code code, Topic topic) {
         CoapClient client = new CoapClient("coap", host, port, topic.getPath());
 
-        code.setResponse(client.get().getCode());
-        String data = client.get().getResponseText();
+        CoapResponse x = client.get();
+
+        String data = x.getResponseText();
+        code.setResponse(x.getCode());
         return data;
     }
 
