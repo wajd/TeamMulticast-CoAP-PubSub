@@ -1,7 +1,6 @@
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapHandler;
 import org.eclipse.californium.core.CoapResponse;
-import org.eclipse.californium.core.coap.CoAP;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -11,9 +10,11 @@ import java.util.concurrent.TimeUnit;
 public class PubSub {
 
     /* Returns array of Topic objects */
-    public static Topic[] discover(String host, int port, long timeout, String path) {
-        CoapClient client = new CoapClient("coap", host, port, path);
+    public static Topic[] discover(String host, int port, Code code, long timeout) {
+        CoapClient client = new CoapClient("coap", host, port, "/.well-known/core");
         client.setTimeout(timeout);
+
+        code.setResponse(client.get().getCode());
         String content = client.get().getResponseText();
         String[] topicS = content.split(",");
         Topic[] topicT = new Topic[topicS.length];

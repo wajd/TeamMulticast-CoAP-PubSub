@@ -51,7 +51,7 @@ public class Topic {
         this.path = array;
     }
 
-    public void setPath(){
+    public void setPath() {
         String[] p = new String[2];
         p[0] = "ps";
         p[1] = this.name;
