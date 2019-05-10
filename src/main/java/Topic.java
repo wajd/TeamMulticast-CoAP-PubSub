@@ -23,11 +23,11 @@ public class Topic {
     /* Takes name, path and ct and makes them into a universal URI to send easily as just a String*/
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder().append("<").append(getPathString()).append(">;ct=").append(getCt());
+        StringBuilder sb = new StringBuilder().append("</").append(getPathString()).append(">;ct=").append(getCt());
         return sb.toString();
     }
 
-    /* Takes name and ct and makes them intp a URI for the CREATE command*/
+    /* Takes name and ct and makes them into a URI for the CREATE command*/
     public String makeCreate() {
         StringBuilder sb = new StringBuilder().append("<").append(getName()).append(">;ct=").append(getCt());
         return sb.toString();
@@ -51,7 +51,7 @@ public class Topic {
         this.path = array;
     }
 
-    public void setPath(){
+    public void setPath() {
         String[] p = new String[2];
         p[0] = "ps";
         p[1] = this.name;
