@@ -26,15 +26,6 @@ public class PubSub {
         return topicT;
     }
 
-//    /* Returns Confirmation Code */
-//    public static CoAP.ResponseCode create(String host, int port, String path, Topic topic) {
-//        CoapClient client = new CoapClient("coap", host, port, path);
-//        String payload = topic.makeCreate();
-//        CoapResponse resp = client.post(payload, 0);
-//
-//        return CoAP.ResponseCode.valueOf(resp.getCode().value);
-//    }
-
     /* Returns topic and Confirmation Code */
     public static Topic create(String host, int port, Code code, Topic topic) {
         CoapClient client = new CoapClient("coap", host, port, "ps");

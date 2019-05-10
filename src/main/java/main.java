@@ -4,7 +4,7 @@ public class main {
 
     public static void main(String[] args) throws InterruptedException {
 
-        String host = "130.229.144.121";
+        String host = "127.0.0.1";
         int port = 5683;
         Code code = new Code();
 
