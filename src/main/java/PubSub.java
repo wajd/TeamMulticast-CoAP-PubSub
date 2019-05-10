@@ -2,8 +2,9 @@ import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapHandler;
 import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.CoAP;
-import java.util.Calendar;
+
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
 
@@ -34,51 +35,50 @@ public class PubSub {
 
     /* ------------------------------ */
 
-    public static CoAP.ResponseCode create(String host, int port, Topic topic) {
+    public static Topic create(String host, int port, Code code, Topic topic) {
         CoapClient client = new CoapClient("coap", host, port, "ps");
         String payload = topic.makeCreate();
-        CoapResponse resp = client.post(payload, 0);
 
+        code.setResponse(client.post(payload, 0).getCode());
         topic.setPath();
 
-        return CoAP.ResponseCode.valueOf(resp.getCode().value);
+        return topic;
     }
 
-    public static CoAP.ResponseCode create(String host, int port, Topic parent, Topic child) {
+    public static Topic create(String host, int port, Code code, Topic parent, Topic child) {
         CoapClient client = new CoapClient("coap", host, port, parent.getPath());
         String payload = child.makeCreate();
-        CoapResponse resp = client.post(payload, 0);
 
-        child.setPath(parent);
+        code.setResponse(client.post(payload, 0).getCode());
+        child.setPath();
 
-        return CoAP.ResponseCode.valueOf(resp.getCode().value);
+        return child;
     }
 
     /* ------------------------------ */
 
 
     /* Returns Confirmation Code */
-    public static CoAP.ResponseCode publish(String host, int port, Topic topic, String payload) {
+    public static void publish(String host, int port, Code code, Topic topic, String payload) {
         CoapClient client = new CoapClient("coap", host, port, topic.getPath());
-        CoapResponse resp = client.put(payload, topic.getCt());
 
-        return CoAP.ResponseCode.valueOf(resp.getCode().value);
+        code.setResponse(client.put(payload, topic.getCt()).getCode());
     }
 
     /* Returns Content */
-    public static String read(String host, int port, Topic topic) {
+    public static String read(String host, int port, Code code, Topic topic) {
         CoapClient client = new CoapClient("coap", host, port, topic.getPath());
-        String data = client.get().getResponseText();
 
+        code.setResponse(client.get().getCode());
+        String data = client.get().getResponseText();
         return data;
     }
 
     /* Returns Confirmation Code */
-    public static CoAP.ResponseCode remove(String host, int port, Topic topic) {
+    public static void remove(String host, int port, Code code,Topic topic) {
         CoapClient client = new CoapClient("coap", host, port, topic.getPath());
-        CoapResponse resp =client.delete();
 
-        return CoAP.ResponseCode.valueOf(resp.getCode().value);
+        code.setResponse(client.delete().getCode());
     }
 
     /* Gets a stream of Content */
@@ -99,23 +99,24 @@ public class PubSub {
         client.observe(handler);
         while (true) ;
     }
+
     public static void fakeSubscribe(String host, int port, String path) throws InterruptedException {
 
         System.out.println("Fake Subscribe");
 
-        String newData, oldData=null;
+        String newData, oldData = null;
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
 
-        while(true) {
+        while (true) {
             TimeUnit.MILLISECONDS.sleep(5);
 
             CoapClient client = new CoapClient("coap", host, port, path);
 
             newData = client.get().getResponseText();
-            if(!newData.equals(oldData)){
+            if (!newData.equals(oldData)) {
                 System.out.println();
-                System.out.println(sdf.format(cal.getTime())+": "+newData);
+                System.out.println(sdf.format(cal.getTime()) + ": " + newData);
                 oldData = newData;
             }
         }
