@@ -33,9 +33,6 @@ public class PubSub {
 //        return CoAP.ResponseCode.valueOf(resp.getCode().value);
 //    }
 
-
-    /* ------------------------------ */
-
     /* Returns topic and Confirmation Code */
     public static Topic create(String host, int port, Code code, Topic topic) {
         CoapClient client = new CoapClient("coap", host, port, "ps");
@@ -57,9 +54,6 @@ public class PubSub {
 
         return child;
     }
-
-    /* ------------------------------ */
-
 
     /* Returns Confirmation Code */
     public static void publish(String host, int port, Code code, Topic topic, String payload) {
