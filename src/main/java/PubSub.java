@@ -14,8 +14,10 @@ public class PubSub {
         CoapClient client = new CoapClient("coap", host, port, "/.well-known/core");
         client.setTimeout(timeout);
 
-        code.setResponse(client.get().getCode());
-        String content = client.get().getResponseText();
+        CoapResponse x = client.get();
+        String content = x.getResponseText();
+        code.setResponse(x.getCode());
+
         String[] topicS = content.split(",");
         Topic[] topicT = new Topic[topicS.length];
         for (int i = 0; i < topicS.length; i++) {
@@ -67,7 +69,6 @@ public class PubSub {
         CoapClient client = new CoapClient("coap", host, port, topic.getPath());
 
         CoapResponse x = client.get();
-
         String data = x.getResponseText();
         code.setResponse(x.getCode());
         return data;
