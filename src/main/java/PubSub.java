@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 public class PubSub {
 
-    /* Returns array of Topic objects */
+    /* Returns array of Topic objects and Confirmation Code*/
     public static Topic[] discover(String host, int port, Code code, long timeout) {
         CoapClient client = new CoapClient("coap", host, port, "/.well-known/core");
         client.setTimeout(timeout);
@@ -36,6 +36,7 @@ public class PubSub {
 
     /* ------------------------------ */
 
+    /* Returns topic and Confirmation Code */
     public static Topic create(String host, int port, Code code, Topic topic) {
         CoapClient client = new CoapClient("coap", host, port, "ps");
         String payload = topic.makeCreate();
@@ -46,6 +47,7 @@ public class PubSub {
         return topic;
     }
 
+    /* Returns topic and Confirmation Code */
     public static Topic create(String host, int port, Code code, Topic parent, Topic child) {
         CoapClient client = new CoapClient("coap", host, port, parent.getPath());
         String payload = child.makeCreate();
@@ -66,7 +68,7 @@ public class PubSub {
         code.setResponse(client.put(payload, topic.getCt()).getCode());
     }
 
-    /* Returns Content */
+    /* Returns Content and Confirmation Code */
     public static String read(String host, int port, Code code, Topic topic) {
         CoapClient client = new CoapClient("coap", host, port, topic.getPath());
 
@@ -76,7 +78,7 @@ public class PubSub {
     }
 
     /* Returns Confirmation Code */
-    public static void remove(String host, int port, Code code,Topic topic) {
+    public static void remove(String host, int port, Code code, Topic topic) {
         CoapClient client = new CoapClient("coap", host, port, topic.getPath());
 
         code.setResponse(client.delete().getCode());

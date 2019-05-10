@@ -1,5 +1,7 @@
 import org.eclipse.californium.core.coap.CoAP;
 
+/* Object code is used to catch the confirmation codes from CoAP commands */
+
 public class Code {
 
     CoAP.ResponseCode response;
