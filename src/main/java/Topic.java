@@ -8,6 +8,7 @@ public class Topic {
     public Topic(String format) {
         String[] small = format.split(";");
 
+        /* Handle content type errors */
         StringBuilder sb = new StringBuilder();
         try {
             this.ct = Integer.parseInt(sb.append(small[1].charAt(small[1].indexOf('=') + 1)).append(small[1].charAt(small[1].indexOf('=') + 2)).toString());

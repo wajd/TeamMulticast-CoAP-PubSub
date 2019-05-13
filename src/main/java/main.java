@@ -4,7 +4,7 @@ public class main {
 
     public static void main(String[] args) throws InterruptedException {
 
-        String host = "127.0.0.1";
+        String host = "130.229.170.114";
         int port = 5683;
         Code code = new Code();
 
@@ -52,12 +52,12 @@ public class main {
             System.out.println("Content type:   " + topics[i].getCt());
         }
         System.out.println();
-
-
-        System.out.println("We publish a message: hello");
-        PubSub.publish(host, port, code, topics[0], "hello");
+//
+        String message = "very nice";
+        System.out.println("We publish a message: " + message);
+        PubSub.publish(host, port, code, topics[0], message);
         if (code.response == CoAP.ResponseCode.CHANGED) {
-            System.out.println(code.toString() + "CHANGED");
+            System.out.println(code.toString() + " CHANGED");
         }
         System.out.println();
 
