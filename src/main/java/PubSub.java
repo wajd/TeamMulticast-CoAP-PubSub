@@ -73,6 +73,8 @@ public class PubSub {
     }
 
     /* Gets a stream of Content */
+
+    /* NOT FINAL */
     public static void subscribe(String host, int port, String path) {
         CoapClient client = new CoapClient("coap", host, port, path);
 
@@ -89,27 +91,5 @@ public class PubSub {
         };
         client.observe(handler);
         while (true) ;
-    }
-
-    public static void fakeSubscribe(String host, int port, String path) throws InterruptedException {
-
-        System.out.println("Fake Subscribe");
-
-        String newData, oldData = null;
-        Calendar cal = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-
-        while (true) {
-            TimeUnit.MILLISECONDS.sleep(5);
-
-            CoapClient client = new CoapClient("coap", host, port, path);
-
-            newData = client.get().getResponseText();
-            if (!newData.equals(oldData)) {
-                System.out.println();
-                System.out.println(sdf.format(cal.getTime()) + ": " + newData);
-                oldData = newData;
-            }
-        }
     }
 }
