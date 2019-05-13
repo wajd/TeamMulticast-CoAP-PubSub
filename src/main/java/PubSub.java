@@ -26,15 +26,6 @@ public class PubSub {
         return topicT;
     }
 
-//    /* Returns Confirmation Code */
-//    public static CoAP.ResponseCode create(String host, int port, String path, Topic topic) {
-//        CoapClient client = new CoapClient("coap", host, port, path);
-//        String payload = topic.makeCreate();
-//        CoapResponse resp = client.post(payload, 0);
-//
-//        return CoAP.ResponseCode.valueOf(resp.getCode().value);
-//    }
-
     /* Returns topic and Confirmation Code */
     public static Topic create(String host, int port, Code code, Topic topic) {
         CoapClient client = new CoapClient("coap", host, port, "ps");
@@ -82,6 +73,8 @@ public class PubSub {
     }
 
     /* Gets a stream of Content */
+
+    /* NOT FINAL */
     public static void subscribe(String host, int port, String path) {
         CoapClient client = new CoapClient("coap", host, port, path);
 
@@ -98,27 +91,5 @@ public class PubSub {
         };
         client.observe(handler);
         while (true) ;
-    }
-
-    public static void fakeSubscribe(String host, int port, String path) throws InterruptedException {
-
-        System.out.println("Fake Subscribe");
-
-        String newData, oldData = null;
-        Calendar cal = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-
-        while (true) {
-            TimeUnit.MILLISECONDS.sleep(5);
-
-            CoapClient client = new CoapClient("coap", host, port, path);
-
-            newData = client.get().getResponseText();
-            if (!newData.equals(oldData)) {
-                System.out.println();
-                System.out.println(sdf.format(cal.getTime()) + ": " + newData);
-                oldData = newData;
-            }
-        }
     }
 }
