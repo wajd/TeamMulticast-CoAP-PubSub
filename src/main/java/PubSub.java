@@ -1,6 +1,7 @@
 import org.eclipse.californium.core.*;
 import org.eclipse.californium.core.coap.CoAP;
 import org.eclipse.californium.core.coap.Request;
+import org.eclipse.californium.core.coap.Response;
 import org.eclipse.californium.core.coap.Token;
 import org.eclipse.californium.core.network.config.NetworkConfig;
 
@@ -76,7 +77,7 @@ public class PubSub {
 
     /* Gets a stream of Content */
 
-    public static void subscribe(String host, int port, String path)  {
+    public static CoapObserveRelation subscribe(String host, int port, String path)  {
 
 
         NetworkConfig coap= NetworkConfig.createStandardWithoutFile();
@@ -129,6 +130,13 @@ public class PubSub {
             }
         });
 
+        return  re;
+    }
+
+    public static void unsubscribe(CoapObserveRelation relation) {
+
+        relation.proactiveCancel();
+        System.out.println("unsubed");
 
     }
 

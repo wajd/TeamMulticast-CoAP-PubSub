@@ -1,9 +1,12 @@
 import org.apache.log4j.BasicConfigurator;
+import org.eclipse.californium.core.CoapObserveRelation;
 import org.eclipse.californium.core.coap.CoAP;
+
+import java.util.concurrent.TimeUnit;
 
 public class main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
 
         String host = "";
         int port = 5683;
@@ -89,6 +92,8 @@ public class main {
             System.out.println("Content type:   " + topics[i].getCt());
         }
 
-        PubSub.subscribe(host,port,"ps/topic1/topic3");
+        CoapObserveRelation re = PubSub.subscribe(host,port,"ps/topic1/topic3");
+        TimeUnit.SECONDS.sleep(30);
+        PubSub.unsubscribe(re);
     }
 }
