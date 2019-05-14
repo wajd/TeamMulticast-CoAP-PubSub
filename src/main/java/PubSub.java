@@ -5,14 +5,11 @@ import org.eclipse.californium.core.coap.Request;
 import org.eclipse.californium.core.coap.Token;
 import org.eclipse.californium.core.network.RandomTokenGenerator;
 import org.eclipse.californium.core.network.config.NetworkConfig;
-
 import java.io.IOException;
 import java.util.Set;
 
 
 public class PubSub {
-
-
 
     private String host;
     private  int port  = 5683;
@@ -20,17 +17,10 @@ public class PubSub {
     private long timeout;
     private NetworkConfig config = NetworkConfig.createStandardWithoutFile();
 
-
-
-
     public PubSub(String host , int port , long timeout ){
-
-
         this.host = host ;
         this.port = port ;
         this.timeout = timeout;
-
-
     }
 
     public NetworkConfig getConfig() {
@@ -81,7 +71,6 @@ public class PubSub {
         }
 
         if (x == null) {
-
             throw new IOException(" NO RESPONSE , TIMEOUT ");
         } else if (x.size() == 0) {
 
@@ -92,10 +81,10 @@ public class PubSub {
         return x;
     }
 
-    public Set<WebLink> discover(String quary) throws RuntimeException, IOException {
+    public Set<WebLink> discover(String query) throws RuntimeException, IOException {
 
         Request discover = Request.newGet();
-        discover.getOptions().setUriPath(".well-known/core" + quary);
+        discover.getOptions().setUriPath(".well-known/core" + query);
 
         CoapClient client = new CoapClient(scheme, this.getHost(), this.getPort());
         client.setTimeout(this.timeout);
@@ -117,8 +106,6 @@ public class PubSub {
         return LinkFormat.parse(response.getResponseText());
 
     }
-
-
 
     /* Returns topic and Confirmation Code */
     public String create(String path , String name , int ct) throws  IOException {
@@ -155,8 +142,6 @@ public class PubSub {
 
 
     }
-
-
 
     /* Returns Confirmation Code */
     public String publish( String path, String payload , int ct ) throws  IOException {
@@ -219,11 +204,9 @@ public class PubSub {
         CoapClient client = new CoapClient(scheme, this.getHost(), this.getPort(), path);
         client.setTimeout(this.timeout);
 
-
-    public static CoapObserveRelation subscribe(String host, int port, String path)  {
-        CoapResponse res = null;
+        CoapResponse response = null;
         try {
-            res = client.delete();
+            response = client.delete();
 
         } catch (RuntimeException e) {
 
@@ -232,35 +215,23 @@ public class PubSub {
         }
 
 
-        if (res == null) {
-
-        CoapClient client = new CoapClient("coap", host, port, path);
-        client.useExecutor();
-        client.setTimeout(5000L);
-       
-            throw new IOException(" PATH IS NOT VALID");
+        if (response == null) {
+            throw new IOException();
         }
 
-        return res.getCode().toString() + " " + res.getCode().name();
-
-
+        return response.getCode().toString() + " " + response.getCode().name();
     }
 
     /* Gets a stream of Content */
 
     /* NOT FINAL */
-    public void subscribe(String path) throws  RuntimeException {
-
-
+    public CoapObserveRelation subscribe(String path, CoapHandler handler) {
 
         Request req = new Request(CoAP.Code.GET);
 
         CoapClient client = new CoapClient(scheme, this.getHost(), this.getPort(), path);
         client.useExecutor();
         client.setTimeout(this.timeout);
-
-
-
 
         req.setURI(client.getURI());
         req.setObserve();
@@ -270,35 +241,24 @@ public class PubSub {
         Token token = rand.createToken(false);
         req.setToken(token);
 
-
-
-        System.out.println(Utils.prettyPrint(req));
-
+        CoapObserveRelation relation = null;
         try{
-            CoapObserveRelation re = client.observe(req ,new CoapHandler() {
-                @Override
-                public void onLoad(CoapResponse response) {
-
-
-                    System.out.println(Utils.prettyPrint(response));
-                }
-
-                @Override
-                public void onError() {
-
-                    System.out.println(" REQUEST TIMEOUT OR REJECTED ");
-                }
-            });}catch (RuntimeException e ){
+            relation = client.observe(req ,handler);
+        }
+        catch (RuntimeException e ){
 
             System.err.println(" THERE IS NO CoAP BROKER FOUND");
         }
+      //  client.shutdown();
+        return  relation;
+    }
 
-        return  re;
+    public static void unsubscribe(CoapObserveRelation relation) {
+        relation.proactiveCancel();
     }
 
 
     public Topic[] get_Topics(Set<WebLink> links){
-
 
         int num = links.size();
 
@@ -315,10 +275,5 @@ public class PubSub {
         }
         return  result;
     }
-
-    public static void unsubscribe(CoapObserveRelation relation) {
-        relation.proactiveCancel();
-    }
-
 
 }
