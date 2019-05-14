@@ -3,6 +3,7 @@ import org.eclipse.californium.core.CoapObserveRelation;
 import org.eclipse.californium.core.coap.CoAP;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import java.util.concurrent.TimeUnit;
 
@@ -17,10 +18,10 @@ public class main {
 
 
 
-        // System.out.println (my.discover("?ct=40"));
+         //System.out.println (my.discover("?ct=40"));
 
-        //System.out.println(my.discover());
-        my.subscribe("ps/tt");
+        System.out.println(Arrays.toString(my.get_Topics(my.discover(""))));
+
 
 
 

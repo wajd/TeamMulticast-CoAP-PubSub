@@ -249,7 +249,7 @@ public class PubSub {
     /* Gets a stream of Content */
 
     /* NOT FINAL */
-    public CoapObserveRelation subscribe(String path) throws IOException, RuntimeException {
+    public void subscribe(String path) throws  RuntimeException {
 
 
 
@@ -309,6 +309,10 @@ public class PubSub {
 
         for (WebLink x:links) {
 
+            result[i] = new Topic(x);
+           i++;
+
+        }
         return  result;
     }
 
