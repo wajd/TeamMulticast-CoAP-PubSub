@@ -6,6 +6,8 @@ public class Topic {
 
     /* Takes a URI and extracts the name, path and ct from it */
     public Topic(String format) {
+
+
         String[] small = format.split(";");
 
         /* Handle content type errors */

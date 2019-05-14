@@ -300,19 +300,20 @@ public class PubSub {
     public Topic[] get_Topics(Set<WebLink> links){
 
 
+        int num = links.size();
+
+        Topic [] result = new Topic[num];
 
 
+        int i = 0;
 
+        for (WebLink x:links) {
 
-
-        return  re;
+        return  result;
     }
 
     public static void unsubscribe(CoapObserveRelation relation) {
-
         relation.proactiveCancel();
-        System.out.println("unsubed");
-
     }
 
 
