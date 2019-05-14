@@ -1,7 +1,6 @@
 import org.eclipse.californium.core.*;
 import org.eclipse.californium.core.coap.CoAP;
 import org.eclipse.californium.core.coap.Request;
-import org.eclipse.californium.core.coap.Response;
 import org.eclipse.californium.core.coap.Token;
 import org.eclipse.californium.core.network.config.NetworkConfig;
 
@@ -88,12 +87,7 @@ public class PubSub {
         CoapClient client = new CoapClient("coap", host, port, path);
         client.useExecutor();
         client.setTimeout(5000L);
-        //client.setEndpoint(aa);
-
-        //client.useNONs();
-
-
-
+       
 
         Request req = new Request(CoAP.Code.GET);
 
@@ -103,16 +97,8 @@ public class PubSub {
         byte i[] = {0x21};
         Token tt = new Token(i);
         req.setToken(tt);
-        //req.setMID(30);*/
-
-
-
-
 
         System.out.println(Utils.prettyPrint(req));
-
-
-
 
         CoapObserveRelation re = client.observeAndWait(req,new CoapHandler() {
             @Override
