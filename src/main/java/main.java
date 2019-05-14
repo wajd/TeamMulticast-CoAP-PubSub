@@ -1,12 +1,15 @@
+import org.apache.log4j.BasicConfigurator;
 import org.eclipse.californium.core.coap.CoAP;
 
 public class main {
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
 
-        String host = "130.229.170.114";
+        String host = "130.229.136.93";
         int port = 5683;
         Code code = new Code();
+
+        BasicConfigurator.configure();
 
         System.out.println("Create topic1 in ps: ");
         PubSub.create(host, port, code, new Topic("topic1", 40));
@@ -85,5 +88,7 @@ public class main {
             System.out.println("Path:           " + topics[i].getPathString());
             System.out.println("Content type:   " + topics[i].getCt());
         }
+
+        PubSub.subscribe(host,port,"ps/topic1/topic3");
     }
 }
