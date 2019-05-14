@@ -6,8 +6,7 @@ The goal of the project is to implement the IETS's RFC for CoAP publish-subscrib
 
 You can follow along our Project progress here: https://sites.google.com/view/team-multicast/home
 
-This project was moved to a new repository: https://github.com/wajd/TeamMulticast-CoAP-PubSub 
-
+You can see the repository for the Android app here: https://github.com/ihilal/Noisy
 
 
 

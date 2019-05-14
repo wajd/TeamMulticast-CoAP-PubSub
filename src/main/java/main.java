@@ -5,7 +5,7 @@ public class main {
 
     public static void main(String[] args) {
 
-        String host = "130.229.136.93";
+        String host = "";
         int port = 5683;
         Code code = new Code();
 
