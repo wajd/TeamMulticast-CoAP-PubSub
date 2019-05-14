@@ -76,7 +76,7 @@ public class PubSub {
 
     /* Gets a stream of Content */
 
-    public static void subscribe(String host, int port, String path)  {
+    public static CoapObserveRelation subscribe(String host, int port, String path)  {
 
 
         NetworkConfig coap= NetworkConfig.createStandardWithoutFile();
@@ -87,12 +87,7 @@ public class PubSub {
         CoapClient client = new CoapClient("coap", host, port, path);
         client.useExecutor();
         client.setTimeout(5000L);
-        //client.setEndpoint(aa);
-
-        //client.useNONs();
-
-
-
+       
 
         Request req = new Request(CoAP.Code.GET);
 
@@ -102,16 +97,8 @@ public class PubSub {
         byte i[] = {0x21};
         Token tt = new Token(i);
         req.setToken(tt);
-        //req.setMID(30);*/
-
-
-
-
 
         System.out.println(Utils.prettyPrint(req));
-
-
-
 
         CoapObserveRelation re = client.observeAndWait(req,new CoapHandler() {
             @Override
@@ -129,6 +116,13 @@ public class PubSub {
             }
         });
 
+        return  re;
+    }
+
+    public static void unsubscribe(CoapObserveRelation relation) {
+
+        relation.proactiveCancel();
+        System.out.println("unsubed");
 
     }
 
