@@ -2,95 +2,27 @@ import org.apache.log4j.BasicConfigurator;
 import org.eclipse.californium.core.CoapObserveRelation;
 import org.eclipse.californium.core.coap.CoAP;
 
+import java.io.IOException;
+
 import java.util.concurrent.TimeUnit;
 
 public class main {
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws  RuntimeException, IOException, InterruptedException {
 
-        String host = "";
-        int port = 5683;
-        Code code = new Code();
 
         BasicConfigurator.configure();
 
-        System.out.println("Create topic1 in ps: ");
-        PubSub.create(host, port, code, new Topic("topic1", 40));
-        System.out.println(code.toString());
+        PubSub my = new PubSub("130.229.129.191",5683,5000);
 
-        System.out.println();
-        System.out.println("Discover topics: ");
-        Topic[] topics = PubSub.discover(host, port, code, 5000);
-        System.out.println(code.toString());
 
-        System.out.println("FOUND " + topics.length + " TOPICS:");
-        for (int i = 0; i < topics.length; i++) {
-            System.out.println();
-            System.out.println(topics[i].toString());
-            System.out.println("Name:           " + topics[i].getName());
-            System.out.println("Path:           " + topics[i].getPathString());
-            System.out.println("Content type:   " + topics[i].getCt());
-        }
-        System.out.println();
 
-        System.out.println("Create topic2 and topic3 inside topic 1");
+        // System.out.println (my.discover("?ct=40"));
 
-        Topic topic2 = new Topic("topic2", 0);
-        Topic topic3 = new Topic("topic3", 0);
+        //System.out.println(my.discover());
+        my.subscribe("ps/tt");
 
-        PubSub.create(host, port, code, topics[0], topic2);
-        System.out.println(code.toString());
-        PubSub.create(host, port, code, topics[0], topic3);
-        System.out.println(code.toString());
 
-//        PubSub.fakeSubscribe("127.0.0.1", 5683, "ps/topic1/topic2");
-
-        System.out.println("Discover: ");
-        topics = PubSub.discover(host, port, code, 5000);
-        System.out.println(code.toString());
-
-        System.out.println("FOUND " + topics.length + " TOPICS:");
-        for (int i = 0; i < topics.length; i++) {
-            System.out.println();
-            System.out.println(topics[i].toString());
-            System.out.println("Name:           " + topics[i].getName());
-            System.out.println("Path:           " + topics[i].getPathString());
-            System.out.println("Content type:   " + topics[i].getCt());
-        }
-        System.out.println();
-//
-        String message = "very nice";
-        System.out.println("We publish a message: " + message);
-        PubSub.publish(host, port, code, topics[0], message);
-        if (code.response == CoAP.ResponseCode.CHANGED) {
-            System.out.println(code.toString() + " CHANGED");
-        }
-        System.out.println();
-
-        System.out.println("We read a message from the topic: ");
-        String s = PubSub.read(host, port, code, topics[0]);
-        System.out.println(code.toString());
-        System.out.println(s);
-        System.out.println();
-
-        System.out.println("We delete " + topics[0].getName() + ": ");
-        PubSub.remove(host, port, code, topics[0]);
-        if (code.response == CoAP.ResponseCode.DELETED) {
-            System.out.println(code.toString() + " REMOVED");
-        }
-        System.out.println();
-
-        System.out.println("We discover again:");
-        topics = PubSub.discover(host, port, code, 5000);
-        System.out.println(code.toString());
-        System.out.println("FOUND " + topics.length + " TOPICS:");
-        for (int i = 0; i < topics.length; i++) {
-            System.out.println();
-            System.out.println(topics[i].toString());
-            System.out.println("Name:           " + topics[i].getName());
-            System.out.println("Path:           " + topics[i].getPathString());
-            System.out.println("Content type:   " + topics[i].getCt());
-        }
 
         CoapObserveRelation re = PubSub.subscribe(host,port,"ps/topic1/topic3");
         TimeUnit.SECONDS.sleep(30);
