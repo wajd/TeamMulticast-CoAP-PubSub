@@ -15,7 +15,7 @@ public class main {
 
     public static void main(String[] args) throws  RuntimeException, IOException, InterruptedException {
 
-        String host = "130.229.171.114";
+        String host = "127.0.0.1";
         int port = 5683;
         long timeout = 5000;
         BasicConfigurator.configure();
@@ -43,5 +43,6 @@ public class main {
         subscription.subscribe();
         Thread.sleep(15000);
         subscription.unsubscribe();
+        //while(true);
     }
 }

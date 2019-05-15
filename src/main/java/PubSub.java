@@ -292,8 +292,11 @@ public class PubSub {
             return;
         }
 
-        public void unsubscribe() {
+        public void unsubscribe() throws InterruptedException {
             relation.proactiveCancel();
+            int mid = relation.getCurrent().advanced().getMID();
+            while(relation.getCurrent().advanced().getMID()==mid);
+            //client.wait(3000);
             client.shutdown();
         }
     }
