@@ -250,6 +250,8 @@ public class PubSub {
         public Subscription(String path, SubscribeListener listener) {
             this.path = path;
             this.listener = listener;
+            this.relation = null;
+            this.client = null;
         }
 
         public void subscribe() {
@@ -293,8 +295,10 @@ public class PubSub {
         }
 
         public void unsubscribe() {
-            relation.proactiveCancel();
-            client.shutdown();
+            if (this.relation != null)
+                relation.proactiveCancel();
+            if (this.client != null)
+                client.shutdown();
         }
     }
 
