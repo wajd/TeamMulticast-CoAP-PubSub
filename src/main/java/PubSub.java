@@ -225,7 +225,7 @@ public class PubSub {
     /* Gets a stream of Content */
 
     /* NOT FINAL */
-    public CoapObserveRelation subscribe(String path, SubscribeListener listener) {
+    public CoapClient subscribe(String path, SubscribeListener listener) {
 
         Request req = new Request(CoAP.Code.GET);
 
@@ -261,12 +261,12 @@ public class PubSub {
 
             System.err.println(" THERE IS NO CoAP BROKER FOUND");
         }
-      //  client.shutdown();
-        return  relation;
+
+        return  client;
     }
 
-    public static void unsubscribe(CoapObserveRelation relation) {
-        relation.proactiveCancel();
+    public static void unsubscribe(CoapClient client) {
+        client.shutdown();
     }
 
 

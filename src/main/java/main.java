@@ -1,4 +1,6 @@
+import com.google.appengine.repackaged.org.joda.time.Seconds;
 import org.apache.log4j.BasicConfigurator;
+import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapHandler;
 import org.eclipse.californium.core.CoapObserveRelation;
 import org.eclipse.californium.core.CoapResponse;
@@ -37,8 +39,8 @@ public class main {
             }
         };
 
-        CoapObserveRelation re = my.subscribe("ps/topic1/topic3", listener);
-
-        //my.unsubscribe(re);
+        CoapClient client = my.subscribe("ps/topic1/topic3", listener);
+        Thread.sleep(15000);
+        my.unsubscribe(client);
     }
 }
