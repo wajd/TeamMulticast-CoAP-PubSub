@@ -250,6 +250,8 @@ public class PubSub {
         public Subscription(String path, SubscribeListener listener) {
             this.path = path;
             this.listener = listener;
+            this.relation = null;
+            this.client = null;
         }
 
         public void subscribe() {
@@ -292,12 +294,14 @@ public class PubSub {
             return;
         }
 
-        public void unsubscribe() throws InterruptedException {
-            relation.proactiveCancel();
-            int mid = relation.getCurrent().advanced().getMID();
-            while(relation.getCurrent().advanced().getMID()==mid);
-            //client.wait(3000);
-            client.shutdown();
+        public void unsubscribe() {
+            if (this.relation != null){
+                relation.proactiveCancel();
+                int mid = relation.getCurrent().advanced().getMID();
+                while(relation.getCurrent().advanced().getMID()==mid);
+            }
+            if (this.client != null)
+                client.shutdown();
         }
     }
 
