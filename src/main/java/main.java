@@ -39,8 +39,9 @@ public class main {
             }
         };
 
-        CoapClient client = my.subscribe("ps/topic1/topic3", listener);
+        PubSub.Subscription subscription = my.new Subscription("ps/topic1/topic3", listener);
+        subscription.subscribe();
         Thread.sleep(15000);
-        my.unsubscribe(client);
+        subscription.unsubscribe();
     }
 }

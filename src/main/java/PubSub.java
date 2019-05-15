@@ -222,53 +222,6 @@ public class PubSub {
         return response.getCode().toString() + " " + response.getCode().name();
     }
 
-    /* Gets a stream of Content */
-
-    /* NOT FINAL */
-    public CoapClient subscribe(String path, SubscribeListener listener) {
-
-        Request req = new Request(CoAP.Code.GET);
-
-        CoapClient client = new CoapClient(scheme, this.getHost(), this.getPort(), path);
-        client.useExecutor();
-        client.setTimeout(this.timeout);
-
-        req.setURI(client.getURI());
-        req.setObserve();
-
-        this.config.set(NetworkConfig.Keys.TOKEN_SIZE_LIMIT,4);
-        RandomTokenGenerator rand = new RandomTokenGenerator(this.config);
-        Token token = rand.createToken(false);
-        req.setToken(token);
-
-        CoapHandler handler = new CoapHandler() {
-            @Override
-            public void onLoad(CoapResponse coapResponse) {
-                  listener.onResponse(coapResponse.getResponseText());
-            }
-
-            @Override
-            public void onError() {
-                   listener.onError();
-            }
-        };
-
-        CoapObserveRelation relation = null;
-        try{
-            relation = client.observe(req ,handler);
-        }
-        catch (RuntimeException e ){
-
-            System.err.println(" THERE IS NO CoAP BROKER FOUND");
-        }
-
-        return  client;
-    }
-
-    public static void unsubscribe(CoapClient client) {
-        client.shutdown();
-    }
-
 
     public Topic[] get_Topics(Set<WebLink> links){
 
@@ -286,6 +239,63 @@ public class PubSub {
 
         }
         return  result;
+    }
+
+    public class Subscription {
+        private CoapClient client;
+        private CoapObserveRelation relation;
+        private String path;
+        private SubscribeListener listener;
+
+        public Subscription(String path, SubscribeListener listener) {
+            this.path = path;
+            this.listener = listener;
+        }
+
+        public void subscribe() {
+
+            Request req = new Request(CoAP.Code.GET);
+
+            client = new CoapClient(scheme, getHost(), getPort(), path);
+            client.useExecutor();
+            client.setTimeout(timeout);
+
+            req.setURI(client.getURI());
+            req.setObserve();
+
+            config.set(NetworkConfig.Keys.TOKEN_SIZE_LIMIT,4);
+            RandomTokenGenerator rand = new RandomTokenGenerator(config);
+            Token token = rand.createToken(false);
+            req.setToken(token);
+
+            CoapHandler handler = new CoapHandler() {
+                @Override
+                public void onLoad(CoapResponse coapResponse) {
+                    listener.onResponse(coapResponse.getResponseText());
+                }
+
+                @Override
+                public void onError() {
+                    listener.onError();
+                }
+            };
+
+
+            try{
+                relation = client.observe(req ,handler);
+            }
+            catch (RuntimeException e ){
+
+                System.err.println(" THERE IS NO CoAP BROKER FOUND");
+            }
+
+            return;
+        }
+
+        public void unsubscribe() {
+            relation.proactiveCancel();
+            client.shutdown();
+        }
     }
 
 }
