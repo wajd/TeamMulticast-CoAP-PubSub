@@ -43,7 +43,7 @@ public class main {
         subscription.subscribe();
         Thread.sleep(15000);
         subscription.unsubscribe();
-        
+
         subscription.subscribe();
         Thread.sleep(15000);
         subscription.unsubscribe();
