@@ -13,7 +13,7 @@ public class main {
 
     public static void main(String[] args) throws  RuntimeException, IOException, InterruptedException {
 
-        String host = "130.229.136.93";
+        String host = "130.229.171.114";
         int port = 5683;
         long timeout = 5000;
         BasicConfigurator.configure();
@@ -25,20 +25,20 @@ public class main {
         System.out.println(my.create("ps", "topic1", 40));
         System.out.println(my.create("ps/topic1", "topic3", 0));
 
-        CoapHandler handler = new CoapHandler() {
+        SubscribeListener listener = new SubscribeListener() {
             @Override
-            public void onLoad(CoapResponse coapResponse) {
-                System.out.println(coapResponse.getResponseText());
+            public void onResponse(String responseText) {
+                System.out.println(responseText);
             }
 
             @Override
             public void onError() {
-
+                System.out.println("ERROR");
             }
         };
 
-        CoapObserveRelation re = my.subscribe("ps/topic1/topic3", handler);
-        TimeUnit.SECONDS.sleep(10);
+        CoapObserveRelation re = my.subscribe("ps/topic1/topic3", listener);
+
         //my.unsubscribe(re);
     }
 }

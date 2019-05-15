@@ -225,7 +225,7 @@ public class PubSub {
     /* Gets a stream of Content */
 
     /* NOT FINAL */
-    public CoapObserveRelation subscribe(String path, CoapHandler handler) {
+    public CoapObserveRelation subscribe(String path, SubscribeListener listener) {
 
         Request req = new Request(CoAP.Code.GET);
 
@@ -240,6 +240,18 @@ public class PubSub {
         RandomTokenGenerator rand = new RandomTokenGenerator(this.config);
         Token token = rand.createToken(false);
         req.setToken(token);
+
+        CoapHandler handler = new CoapHandler() {
+            @Override
+            public void onLoad(CoapResponse coapResponse) {
+                  listener.onResponse(coapResponse.getResponseText());
+            }
+
+            @Override
+            public void onError() {
+                   listener.onError();
+            }
+        };
 
         CoapObserveRelation relation = null;
         try{
