@@ -294,9 +294,10 @@ public class PubSub {
             return;
         }
 
-        public void unsubscribe() {
+        public void unsubscribe() throws InterruptedException {
             if (this.relation != null)
                 relation.proactiveCancel();
+            Thread.sleep(5000);
             if (this.client != null)
                 client.shutdown();
         }
