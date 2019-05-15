@@ -1,129 +1,301 @@
 import org.eclipse.californium.core.*;
 import org.eclipse.californium.core.coap.CoAP;
+import org.eclipse.californium.core.coap.LinkFormat;
 import org.eclipse.californium.core.coap.Request;
 import org.eclipse.californium.core.coap.Token;
+import org.eclipse.californium.core.network.RandomTokenGenerator;
 import org.eclipse.californium.core.network.config.NetworkConfig;
-
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.concurrent.TimeUnit;
+import java.io.IOException;
+import java.util.Set;
 
 
 public class PubSub {
 
+    private String host;
+    private  int port  = 5683;
+    private static final String scheme = "coap";
+    private long timeout;
+    private NetworkConfig config = NetworkConfig.createStandardWithoutFile();
+
+    public PubSub(String host , int port , long timeout ){
+        this.host = host ;
+        this.port = port ;
+        this.timeout = timeout;
+    }
+
+    public NetworkConfig getConfig() {
+        return config;
+    }
+
+    public void setConfig(NetworkConfig config) {
+        this.config = config;
+    }
+
+    public int getPort() {
+        return this.port;
+    }
+
+    public String getHost() {
+        return this.host;
+    }
+
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public long getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(long timeout) {
+        this.timeout = timeout;
+    }
     /* Returns array of Topic objects and Confirmation Code*/
-    public static Topic[] discover(String host, int port, Code code, long timeout) {
-        CoapClient client = new CoapClient("coap", host, port, "/.well-known/core");
-        client.setTimeout(timeout);
 
-        CoapResponse x = client.get();
-        String content = x.getResponseText();
-        code.setResponse(x.getCode());
+    public Set<WebLink> discover() throws  IOException {
+        CoapClient client = new CoapClient(scheme, this.getHost(), this.getPort());
+        client.setTimeout(this.timeout);
 
-        String[] topicS = content.split(",");
-        Topic[] topicT = new Topic[topicS.length];
-        for (int i = 0; i < topicS.length; i++) {
-            topicT[i] = new Topic(topicS[i]);
+        Set<WebLink> x = null;
+        try {
+
+            x = client.discover("?rt=core.ps");
+        } catch (RuntimeException e) {
+
+            System.err.println(" THERE IS NO CoAP BROKER FOUND");
         }
-        return topicT;
+
+        if (x == null) {
+            throw new IOException(" NO RESPONSE , TIMEOUT ");
+        } else if (x.size() == 0) {
+
+            System.out.println(" THE CONTENT FORMAT IS NOT 40 = APPLICATION LINK FORMAT");
+            return x;
+        }
+
+        return x;
+    }
+
+    public Set<WebLink> discover(String query) throws RuntimeException, IOException {
+
+        Request discover = Request.newGet();
+        discover.getOptions().setUriPath(".well-known/core" + query);
+
+        CoapClient client = new CoapClient(scheme, this.getHost(), this.getPort());
+        client.setTimeout(this.timeout);
+
+        CoapResponse response = null;
+        try {
+            response = client.advanced(discover);
+        } catch (RuntimeException e) {
+
+            System.err.println(" THERE IS NO CoAP BROKER FOUND");
+        }
+
+
+        if (response == null) {
+
+            throw  new IOException(" NO RESPONSE , TIMEOUT");
+
+        }
+        return LinkFormat.parse(response.getResponseText());
+
     }
 
     /* Returns topic and Confirmation Code */
-    public static Topic create(String host, int port, Code code, Topic topic) {
-        CoapClient client = new CoapClient("coap", host, port, "ps");
-        String payload = topic.makeCreate();
+    public String create(String path , String name , int ct) throws  IOException {
 
-        code.setResponse(client.post(payload, 0).getCode());
-        topic.setPath();
 
-        return topic;
-    }
+        CoapClient client = new CoapClient(scheme, this.getHost(), this.getPort(), path);
+        client.setTimeout(this.timeout);
 
-    /* Returns topic and Confirmation Code */
-    public static Topic create(String host, int port, Code code, Topic parent, Topic child) {
-        CoapClient client = new CoapClient("coap", host, port, parent.getPath());
-        String payload = child.makeCreate();
 
-        code.setResponse(client.post(payload, 0).getCode());
-        child.setPath();
+        StringBuilder sb = new StringBuilder().append("<").append(name).append(">;ct=").append(ct);
+        String payload = sb.toString();
 
-        return child;
+
+        Request req = Request.newPost();
+        req.setPayload(payload);
+        req.getOptions().setContentFormat(ct);
+
+        CoapResponse res = null;
+        try {
+            res = client.advanced(req);
+        } catch (RuntimeException e) {
+
+            System.err.println(" THERE IS NO CoAP BROKER FOUND");
+        }
+
+
+        if (res == null) {
+
+            throw new IOException("INVALID PATH ");
+
+        }
+
+        return res.getResponseText() + "\n" + res.getOptions().toString();
+
+
     }
 
     /* Returns Confirmation Code */
-    public static void publish(String host, int port, Code code, Topic topic, String payload) {
-        CoapClient client = new CoapClient("coap", host, port, topic.getPath());
+    public String publish( String path, String payload , int ct ) throws  IOException {
 
-        code.setResponse(client.put(payload, topic.getCt()).getCode());
+
+        CoapClient client = new CoapClient(scheme, this.getHost(), this.getPort(), path);
+        client.setTimeout(this.timeout);
+
+        CoapResponse res = null;
+        try {
+            res = client.put(payload, ct);
+
+        } catch (RuntimeException e) {
+
+            System.err.println(" THERE IS NO CoAP BROKER FOUND");
+
+        }
+
+
+        if (res == null) {
+
+            throw new IOException(" INVALID PATH ");
+
+        }
+
+        return res.getCode().toString() + " " + res.getCode().name();
+
     }
 
     /* Returns Content and Confirmation Code */
-    public static String read(String host, int port, Code code, Topic topic) {
-        CoapClient client = new CoapClient("coap", host, port, topic.getPath());
+    public String read(String path) throws  IOException {
+        CoapClient client = new CoapClient(scheme, this.getHost(), this.getPort(), path);
+        client.setTimeout(this.timeout);
 
-        CoapResponse x = client.get();
-        String data = x.getResponseText();
-        code.setResponse(x.getCode());
-        return data;
+
+        CoapResponse x = null;
+        try {
+            x = client.get();
+
+        } catch (RuntimeException e) {
+
+            System.err.println(" THERE IS NO CoAP BROKER FOUND");
+
+
+        }
+
+        if (x == null) {
+
+            throw new IOException(" PATH IS NOT VALID");
+        }
+
+
+        return x.getResponseText();
+
     }
 
     /* Returns Confirmation Code */
-    public static void remove(String host, int port, Code code, Topic topic) {
-        CoapClient client = new CoapClient("coap", host, port, topic.getPath());
+    public String remove(String path) throws  IOException {
 
-        code.setResponse(client.delete().getCode());
+        CoapClient client = new CoapClient(scheme, this.getHost(), this.getPort(), path);
+        client.setTimeout(this.timeout);
+
+        CoapResponse response = null;
+        try {
+            response = client.delete();
+
+        } catch (RuntimeException e) {
+
+            System.err.println(" THERE IS NO CoAP BROKER FOUND");
+
+        }
+
+
+        if (response == null) {
+            throw new IOException();
+        }
+
+        return response.getCode().toString() + " " + response.getCode().name();
     }
 
-    /* Gets a stream of Content */
 
-    public static CoapObserveRelation subscribe(String host, int port, String path)  {
+    public Topic[] get_Topics(Set<WebLink> links){
 
+        int num = links.size();
 
-        NetworkConfig coap= NetworkConfig.createStandardWithoutFile();
-
-
+        Topic [] result = new Topic[num];
 
 
-        CoapClient client = new CoapClient("coap", host, port, path);
-        client.useExecutor();
-        client.setTimeout(5000L);
-       
+        int i = 0;
 
-        Request req = new Request(CoAP.Code.GET);
+        for (WebLink x:links) {
 
-        req.setURI("coap://"+host+":"+port+"/"+path);
-        req.setObserve();
+            result[i] = new Topic(x);
+           i++;
 
-        byte i[] = {0x21};
-        Token tt = new Token(i);
-        req.setToken(tt);
-
-        System.out.println(Utils.prettyPrint(req));
-
-        CoapObserveRelation re = client.observeAndWait(req,new CoapHandler() {
-            @Override
-            public void onLoad(CoapResponse response) {
-
-
-                System.out.println(Utils.prettyPrint(response));
-
-            }
-
-            @Override
-            public void onError() {
-
-                System.out.println(" SOMETHING IS WRONG ");
-            }
-        });
-
-        return  re;
+        }
+        return  result;
     }
 
-    public static void unsubscribe(CoapObserveRelation relation) {
+    public class Subscription {
+        private CoapClient client;
+        private CoapObserveRelation relation;
+        private String path;
+        private SubscribeListener listener;
 
-        relation.proactiveCancel();
-        System.out.println("unsubed");
+        public Subscription(String path, SubscribeListener listener) {
+            this.path = path;
+            this.listener = listener;
+        }
 
+        public void subscribe() {
+
+            Request req = new Request(CoAP.Code.GET);
+
+            client = new CoapClient(scheme, getHost(), getPort(), path);
+            client.useExecutor();
+            client.setTimeout(timeout);
+
+            req.setURI(client.getURI());
+            req.setObserve();
+
+            config.set(NetworkConfig.Keys.TOKEN_SIZE_LIMIT,4);
+            RandomTokenGenerator rand = new RandomTokenGenerator(config);
+            Token token = rand.createToken(false);
+            req.setToken(token);
+
+            CoapHandler handler = new CoapHandler() {
+                @Override
+                public void onLoad(CoapResponse coapResponse) {
+                    listener.onResponse(coapResponse.getResponseText());
+                }
+
+                @Override
+                public void onError() {
+                    listener.onError();
+                }
+            };
+
+
+            try{
+                relation = client.observe(req ,handler);
+            }
+            catch (RuntimeException e ){
+
+                System.err.println(" THERE IS NO CoAP BROKER FOUND");
+            }
+
+            return;
+        }
+
+        public void unsubscribe() {
+            relation.proactiveCancel();
+            client.shutdown();
+        }
     }
 
 }
