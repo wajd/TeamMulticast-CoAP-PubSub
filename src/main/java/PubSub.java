@@ -84,6 +84,8 @@ public class PubSub {
         if (response == null) {
             throw new IOException("NO RESPONSE, TIMEOUT");
         }
+
+
         return response;
     }
 
@@ -110,6 +112,7 @@ public class PubSub {
         if (res == null) {
             throw new IOException("INVALID PATH");
         }
+
         return res;
     }
 
@@ -129,6 +132,7 @@ public class PubSub {
         if (res == null) {
             throw new IOException(" INVALID PATH ");
         }
+
         return res;
     }
 
@@ -147,6 +151,7 @@ public class PubSub {
         if (res == null) {
             throw new IOException(" PATH IS NOT VALID");
         }
+
         return res;
     }
 
@@ -166,6 +171,7 @@ public class PubSub {
         if (res == null) {
             throw new IOException();
         }
+
         return res;
     }
 
@@ -173,12 +179,12 @@ public class PubSub {
         private CoapClient client;
         private CoapObserveRelation relation;
         private String path;
-        private SubscribeListener listener;
+        private CoapHandler handler;
 
         //Constructor, does not subscribe
-        public Subscription(String path, SubscribeListener listener) {
+        public Subscription(String path, CoapHandler handler) {
             this.path = path;
-            this.listener = listener;
+            this.handler = handler;
             this.relation = null;
             this.client = null;
         }
@@ -200,17 +206,6 @@ public class PubSub {
             Token token = rand.createToken(false);
             req.setToken(token);
 
-            CoapHandler handler = new CoapHandler() {
-                @Override
-                public void onLoad(CoapResponse coapResponse) {
-                    listener.onResponse(coapResponse.getResponseText());
-                }
-
-                @Override
-                public void onError() {
-                    listener.onError();
-                }
-            };
             try {
                 relation = client.observe(req, handler);
             } catch (RuntimeException e) {

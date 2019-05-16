@@ -1,4 +1,7 @@
 import org.apache.log4j.BasicConfigurator;
+import org.eclipse.californium.core.CoapHandler;
+import org.eclipse.californium.core.CoapResponse;
+
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -13,9 +16,9 @@ public class main {
         PubSub my = new PubSub(host);
 
         //create
-        System.out.println(my.create("ps", "topic1", 40));
-        System.out.println(my.create("ps", "topic3", 0));
-        System.out.println(my.create("ps/topic1", "topic4", 0));
+        System.out.println(my.create("ps", "topic1", 40).getCode().name());
+        System.out.println(my.create("ps", "topic3", 0).getResponseText());
+        System.out.println(my.create("ps/topic1", "topic4", 0).isSuccess());
 
 
         //Discover
@@ -33,25 +36,24 @@ public class main {
 
 
 
-//        //Publish
-//        System.out.println(my.publish("ps/topic3", "Hello", 0).getCode().name());
-//
-//        //Read
-//        System.out.println(my.read("ps/topic3").getResponseText());
-//
-//        //Remove
-//        System.out.println(my.remove("ps/topic1/topic5").getCode().name());
+        //Publish
+        System.out.println(my.publish("ps/topic3", "Hello", 0).getCode().name());
 
-        //getTopics
-        //System.out.println(Arrays.toString(my.getTopics(my.discover())));
+        //Read
+        System.out.println(my.read("ps/topic3").getResponseText());
+
+        //Remove
+        System.out.println(my.remove("ps/topic1/topic5").getCode().name());
+
+        System.out.println(my.discover().getResponseText());
 
 //        /*Subscribe/Unsub*/
 //
 //        //create listener
-//        SubscribeListener listener = new SubscribeListener() {
+//        CoapHandler handler = new CoapHandler() {
 //            @Override
-//            public void onResponse(String responseText) {
-//                System.out.println("topic3: " + responseText);
+//            public void onLoad(CoapResponse coapResponse) {
+//                System.out.println("topic3: " + coapResponse.getResponseText());
 //            }
 //
 //            @Override
@@ -61,7 +63,7 @@ public class main {
 //        };
 //
 //        //subscription constructor
-//        PubSub.Subscription subscription = my.new Subscription("ps/topic1/topic4", listener);
+//        PubSub.Subscription subscription = my.new Subscription("ps/topic1/topic4", handler);
 //        //subscribe
 //        subscription.subscribe();
 //
