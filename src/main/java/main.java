@@ -1,4 +1,7 @@
 import org.apache.log4j.BasicConfigurator;
+import org.eclipse.californium.core.CoapHandler;
+import org.eclipse.californium.core.CoapResponse;
+
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -47,10 +50,10 @@ public class main {
 //        /*Subscribe/Unsub*/
 //
 //        //create listener
-//        SubscribeListener listener = new SubscribeListener() {
+//        CoapHandler handler = new CoapHandler() {
 //            @Override
-//            public void onResponse(String responseText) {
-//                System.out.println("topic3: " + responseText);
+//            public void onLoad(CoapResponse coapResponse) {
+//                System.out.println("topic3: " + coapResponse.getResponseText());
 //            }
 //
 //            @Override
@@ -60,7 +63,7 @@ public class main {
 //        };
 //
 //        //subscription constructor
-//        PubSub.Subscription subscription = my.new Subscription("ps/topic1/topic4", listener);
+//        PubSub.Subscription subscription = my.new Subscription("ps/topic1/topic4", handler);
 //        //subscribe
 //        subscription.subscribe();
 //

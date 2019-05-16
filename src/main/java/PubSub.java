@@ -64,11 +64,11 @@ public class PubSub {
     }
 
     /* Returns array of Topic objects and Confirmation Code*/
-    public PubSubResponse discover() throws IOException, RuntimeException {
+    public CoapResponse discover() throws IOException, RuntimeException {
         return discover("");
     }
 
-    public PubSubResponse discover(String query) throws IOException, RuntimeException {
+    public CoapResponse discover(String query) throws IOException, RuntimeException {
         Request discover = Request.newGet();
         discover.getOptions().setUriPath(".well-known/core?" + query);
 
@@ -86,11 +86,11 @@ public class PubSub {
         }
 
 
-        return new PubSubResponse(response);
+        return response;
     }
 
     /* Returns topic and Confirmation Code */
-    public PubSubResponse create(String path, String name, int ct) throws IOException, RuntimeException {
+    public CoapResponse create(String path, String name, int ct) throws IOException, RuntimeException {
 
         CoapClient client = new CoapClient(SCHEME, this.getHost(), this.getPort(), path);
         client.setTimeout(this.timeout);
@@ -113,11 +113,11 @@ public class PubSub {
             throw new IOException("INVALID PATH");
         }
 
-        return new PubSubResponse(res);
+        return res;
     }
 
     /* Returns Confirmation Code */
-    public PubSubResponse publish(String path, String payload, int ct) throws IOException, RuntimeException {
+    public CoapResponse publish(String path, String payload, int ct) throws IOException, RuntimeException {
         CoapClient client = new CoapClient(SCHEME, this.getHost(), this.getPort(), path);
         client.setTimeout(this.timeout);
 
@@ -133,11 +133,11 @@ public class PubSub {
             throw new IOException(" INVALID PATH ");
         }
 
-        return new PubSubResponse(res);
+        return res;
     }
 
     /* Returns Content and Confirmation Code */
-    public PubSubResponse read(String path) throws IOException, RuntimeException {
+    public CoapResponse read(String path) throws IOException, RuntimeException {
         CoapClient client = new CoapClient(SCHEME, this.getHost(), this.getPort(), path);
         client.setTimeout(this.timeout);
 
@@ -152,11 +152,11 @@ public class PubSub {
             throw new IOException(" PATH IS NOT VALID");
         }
 
-        return new PubSubResponse(res);
+        return res;
     }
 
     /* Returns Confirmation Code */
-    public PubSubResponse remove(String path) throws IOException, RuntimeException {
+    public CoapResponse remove(String path) throws IOException, RuntimeException {
 
         CoapClient client = new CoapClient(SCHEME, this.getHost(), this.getPort(), path);
         client.setTimeout(this.timeout);
@@ -172,19 +172,19 @@ public class PubSub {
             throw new IOException();
         }
 
-        return new PubSubResponse(res);
+        return res;
     }
 
     public class Subscription {
         private CoapClient client;
         private CoapObserveRelation relation;
         private String path;
-        private SubscribeListener listener;
+        private CoapHandler handler;
 
         //Constructor, does not subscribe
-        public Subscription(String path, SubscribeListener listener) {
+        public Subscription(String path, CoapHandler handler) {
             this.path = path;
-            this.listener = listener;
+            this.handler = handler;
             this.relation = null;
             this.client = null;
         }
@@ -206,17 +206,6 @@ public class PubSub {
             Token token = rand.createToken(false);
             req.setToken(token);
 
-            CoapHandler handler = new CoapHandler() {
-                @Override
-                public void onLoad(CoapResponse coapResponse) {
-                    listener.onResponse(new PubSubResponse(coapResponse));
-                }
-
-                @Override
-                public void onError() {
-                    listener.onError();
-                }
-            };
             try {
                 relation = client.observe(req, handler);
             } catch (RuntimeException e) {
