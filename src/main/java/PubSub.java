@@ -107,7 +107,7 @@ public class PubSub {
     }
 
     /* Returns topic and Confirmation Code */
-    public String create(String path, String name, int ct) throws IOException, RuntimeException {
+    public CoapResponse create(String path, String name, int ct) throws IOException, RuntimeException {
 
         CoapClient client = new CoapClient(SCHEME, this.getHost(), this.getPort(), path);
         client.setTimeout(this.timeout);
@@ -130,11 +130,11 @@ public class PubSub {
             throw new IOException("INVALID PATH");
         }
 
-        return res.getResponseText() + "\n" + res.getOptions().toString();
+        return res;
     }
 
     /* Returns Confirmation Code */
-    public String publish(String path, String payload, int ct) throws IOException, RuntimeException {
+    public CoapResponse publish(String path, String payload, int ct) throws IOException, RuntimeException {
         CoapClient client = new CoapClient(SCHEME, this.getHost(), this.getPort(), path);
         client.setTimeout(this.timeout);
 
@@ -151,49 +151,49 @@ public class PubSub {
 
         }
 
-        return res.getCode().toString() + " " + res.getCode().name();
+        return res;
     }
 
     /* Returns Content and Confirmation Code */
-    public String read(String path) throws IOException, RuntimeException {
+    public CoapResponse read(String path) throws IOException, RuntimeException {
         CoapClient client = new CoapClient(SCHEME, this.getHost(), this.getPort(), path);
         client.setTimeout(this.timeout);
 
-        CoapResponse x = null;
+        CoapResponse res = null;
         try {
-            x = client.get();
+            res = client.get();
 
         } catch (RuntimeException e) {
             throw e;//Broker not found
         }
 
-        if (x == null) {
+        if (res == null) {
             throw new IOException(" PATH IS NOT VALID");
         }
 
-        return x.getResponseText();
+        return res;
     }
 
     /* Returns Confirmation Code */
-    public String remove(String path) throws IOException, RuntimeException {
+    public CoapResponse remove(String path) throws IOException, RuntimeException {
 
         CoapClient client = new CoapClient(SCHEME, this.getHost(), this.getPort(), path);
         client.setTimeout(this.timeout);
 
-        CoapResponse response = null;
+        CoapResponse res = null;
         try {
-            response = client.delete();
+            res = client.delete();
 
         } catch (RuntimeException e) {
             throw e;
         }
 
 
-        if (response == null) {
+        if (res == null) {
             throw new IOException();
         }
 
-        return response.getCode().toString() + " " + response.getCode().name();
+        return res;
     }
 
     public Topic[] getTopics(Set<WebLink> links) {
@@ -266,5 +266,4 @@ public class PubSub {
                 client.shutdown();
         }
     }
-
 }
