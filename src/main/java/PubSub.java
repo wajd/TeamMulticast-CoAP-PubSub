@@ -64,11 +64,12 @@ public class PubSub {
     }
 
     /* Returns array of Topic objects and Confirmation Code*/
-    public CoapResponse discover() throws IOException, RuntimeException {
+    public PubSubResponse discover() throws IOException, RuntimeException {
         return discover("");
     }
 
-    public CoapResponse discover(String query) throws IOException, RuntimeException {
+
+    public PubSubResponse discover(String query) throws IOException, RuntimeException {
         Request discover = Request.newGet();
         discover.getOptions().setUriPath(".well-known/core?" + query);
 
@@ -84,11 +85,13 @@ public class PubSub {
         if (response == null) {
             throw new IOException("NO RESPONSE, TIMEOUT");
         }
-        return response;
+
+
+        return new PubSubResponse(response);
     }
 
     /* Returns topic and Confirmation Code */
-    public CoapResponse create(String path, String name, int ct) throws IOException, RuntimeException {
+    public PubSubResponse create(String path, String name, int ct) throws IOException, RuntimeException {
 
         CoapClient client = new CoapClient(SCHEME, this.getHost(), this.getPort(), path);
         client.setTimeout(this.timeout);
@@ -110,11 +113,12 @@ public class PubSub {
         if (res == null) {
             throw new IOException("INVALID PATH");
         }
-        return res;
+
+        return new PubSubResponse(res);
     }
 
     /* Returns Confirmation Code */
-    public CoapResponse publish(String path, String payload, int ct) throws IOException, RuntimeException {
+    public PubSubResponse publish(String path, String payload, int ct) throws IOException, RuntimeException {
         CoapClient client = new CoapClient(SCHEME, this.getHost(), this.getPort(), path);
         client.setTimeout(this.timeout);
 
@@ -129,11 +133,12 @@ public class PubSub {
         if (res == null) {
             throw new IOException(" INVALID PATH ");
         }
-        return res;
+
+        return new PubSubResponse(res);
     }
 
     /* Returns Content and Confirmation Code */
-    public CoapResponse read(String path) throws IOException, RuntimeException {
+    public PubSubResponse read(String path) throws IOException, RuntimeException {
         CoapClient client = new CoapClient(SCHEME, this.getHost(), this.getPort(), path);
         client.setTimeout(this.timeout);
 
@@ -147,11 +152,12 @@ public class PubSub {
         if (res == null) {
             throw new IOException(" PATH IS NOT VALID");
         }
-        return res;
+
+        return new PubSubResponse(res);
     }
 
     /* Returns Confirmation Code */
-    public CoapResponse remove(String path) throws IOException, RuntimeException {
+    public PubSubResponse remove(String path) throws IOException, RuntimeException {
 
         CoapClient client = new CoapClient(SCHEME, this.getHost(), this.getPort(), path);
         client.setTimeout(this.timeout);
@@ -166,8 +172,10 @@ public class PubSub {
         if (res == null) {
             throw new IOException();
         }
-        return res;
+
+        return new PubSubResponse(res);
     }
+
 
     public class Subscription {
         private CoapClient client;
