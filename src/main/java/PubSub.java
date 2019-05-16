@@ -12,10 +12,16 @@ import java.util.Set;
 public class PubSub {
 
     private String host;
-    private  int port  = 5683;
-    private static final String scheme = "coap";
+    private int port;
+    private static final String SCHEME = "coap";
     private long timeout;
     private NetworkConfig config = NetworkConfig.createStandardWithoutFile();
+
+    public PubSub(String host) {
+        this.host = host;
+        this.port = 5683;
+        this.timeout = 5000;
+    }
 
     public PubSub(String host , int port , long timeout ){
         this.host = host ;
@@ -57,67 +63,57 @@ public class PubSub {
     }
     /* Returns array of Topic objects and Confirmation Code*/
 
-    public Set<WebLink> discover() throws  IOException {
-        CoapClient client = new CoapClient(scheme, this.getHost(), this.getPort());
+    public Set<WebLink> discover() throws  IOException, RuntimeException {
+        CoapClient client = new CoapClient(SCHEME, this.getHost(), this.getPort());
         client.setTimeout(this.timeout);
 
-        Set<WebLink> x = null;
+        Set<WebLink> weblinks;
         try {
-
-            x = client.discover("?rt=core.ps");
+            weblinks = client.discover("?rt=core.ps");
         } catch (RuntimeException e) {
-
-            System.err.println(" THERE IS NO CoAP BROKER FOUND");
+            throw e;
         }
 
-        if (x == null) {
-            throw new IOException(" NO RESPONSE , TIMEOUT ");
-        } else if (x.size() == 0) {
-
-            System.out.println(" THE CONTENT FORMAT IS NOT 40 = APPLICATION LINK FORMAT");
-            return x;
+        if (weblinks == null) {
+            throw new IOException("NO RESPONSE, TIMEOUT");
         }
 
-        return x;
+        if (weblinks.size() == 0) {
+            throw new IllegalArgumentException("CT IS NOT 40");
+        }
+
+        return weblinks;
     }
 
-    public Set<WebLink> discover(String query) throws RuntimeException, IOException {
-
+    public Set<WebLink> discover(String query) throws IOException, RuntimeException {
         Request discover = Request.newGet();
         discover.getOptions().setUriPath(".well-known/core" + query);
 
-        CoapClient client = new CoapClient(scheme, this.getHost(), this.getPort());
+        CoapClient client = new CoapClient(SCHEME, this.getHost(), this.getPort());
         client.setTimeout(this.timeout);
 
-        CoapResponse response = null;
+        CoapResponse response;
         try {
             response = client.advanced(discover);
         } catch (RuntimeException e) {
-
-            System.err.println(" THERE IS NO CoAP BROKER FOUND");
+            throw e;
         }
-
 
         if (response == null) {
-
-            throw  new IOException(" NO RESPONSE , TIMEOUT");
-
+            throw  new IOException("NO RESPONSE, TIMEOUT");
         }
-        return LinkFormat.parse(response.getResponseText());
 
+        return LinkFormat.parse(response.getResponseText());
     }
 
     /* Returns topic and Confirmation Code */
-    public String create(String path , String name , int ct) throws  IOException {
+    public String create(String path, String name, int ct) throws IOException, RuntimeException {
 
-
-        CoapClient client = new CoapClient(scheme, this.getHost(), this.getPort(), path);
+        CoapClient client = new CoapClient(SCHEME, this.getHost(), this.getPort(), path);
         client.setTimeout(this.timeout);
-
 
         StringBuilder sb = new StringBuilder().append("<").append(name).append(">;ct=").append(ct);
         String payload = sb.toString();
-
 
         Request req = Request.newPost();
         req.setPayload(payload);
@@ -127,27 +123,20 @@ public class PubSub {
         try {
             res = client.advanced(req);
         } catch (RuntimeException e) {
-
-            System.err.println(" THERE IS NO CoAP BROKER FOUND");
+            throw e;
         }
 
 
         if (res == null) {
-
-            throw new IOException("INVALID PATH ");
-
+            throw new IOException("INVALID PATH");
         }
 
         return res.getResponseText() + "\n" + res.getOptions().toString();
-
-
     }
 
     /* Returns Confirmation Code */
-    public String publish( String path, String payload , int ct ) throws  IOException {
-
-
-        CoapClient client = new CoapClient(scheme, this.getHost(), this.getPort(), path);
+    public String publish( String path, String payload , int ct ) throws  IOException, RuntimeException {
+        CoapClient client = new CoapClient(SCHEME, this.getHost(), this.getPort(), path);
         client.setTimeout(this.timeout);
 
         CoapResponse res = null;
@@ -155,53 +144,41 @@ public class PubSub {
             res = client.put(payload, ct);
 
         } catch (RuntimeException e) {
-
-            System.err.println(" THERE IS NO CoAP BROKER FOUND");
-
+            throw e;
         }
 
-
         if (res == null) {
-
             throw new IOException(" INVALID PATH ");
 
         }
 
         return res.getCode().toString() + " " + res.getCode().name();
-
     }
 
     /* Returns Content and Confirmation Code */
-    public String read(String path) throws  IOException {
-        CoapClient client = new CoapClient(scheme, this.getHost(), this.getPort(), path);
+    public String read(String path) throws  IOException, RuntimeException {
+        CoapClient client = new CoapClient(SCHEME, this.getHost(), this.getPort(), path);
         client.setTimeout(this.timeout);
-
 
         CoapResponse x = null;
         try {
             x = client.get();
 
         } catch (RuntimeException e) {
-
-            System.err.println(" THERE IS NO CoAP BROKER FOUND");
-
-
+            throw e;//Broker not found
         }
 
         if (x == null) {
-
             throw new IOException(" PATH IS NOT VALID");
         }
 
-
         return x.getResponseText();
-
     }
 
     /* Returns Confirmation Code */
-    public String remove(String path) throws  IOException {
+    public String remove(String path) throws IOException, RuntimeException {
 
-        CoapClient client = new CoapClient(scheme, this.getHost(), this.getPort(), path);
+        CoapClient client = new CoapClient(SCHEME, this.getHost(), this.getPort(), path);
         client.setTimeout(this.timeout);
 
         CoapResponse response = null;
@@ -209,9 +186,7 @@ public class PubSub {
             response = client.delete();
 
         } catch (RuntimeException e) {
-
-            System.err.println(" THERE IS NO CoAP BROKER FOUND");
-
+            throw e;
         }
 
 
@@ -224,21 +199,15 @@ public class PubSub {
 
 
     public Topic[] get_Topics(Set<WebLink> links){
-
-        int num = links.size();
-
-        Topic [] result = new Topic[num];
-
+        Topic [] topics = new Topic[links.size()];
 
         int i = 0;
-
         for (WebLink x:links) {
-
-            result[i] = new Topic(x);
-           i++;
-
+            topics[i] = new Topic(x);
+            i++;
         }
-        return  result;
+
+        return  topics;
     }
 
     public class Subscription {
@@ -247,6 +216,7 @@ public class PubSub {
         private String path;
         private SubscribeListener listener;
 
+        //Constructor, does not subscribe
         public Subscription(String path, SubscribeListener listener) {
             this.path = path;
             this.listener = listener;
@@ -254,11 +224,12 @@ public class PubSub {
             this.client = null;
         }
 
-        public void subscribe() {
+        //call this method to subscribe, can use it to subscribe to same topic again
+        public void subscribe() throws RuntimeException {
 
             Request req = new Request(CoAP.Code.GET);
 
-            client = new CoapClient(scheme, getHost(), getPort(), path);
+            client = new CoapClient(SCHEME, getHost(), getPort(), path);
             client.useExecutor();
             client.setTimeout(timeout);
 
@@ -284,16 +255,14 @@ public class PubSub {
 
 
             try{
-                relation = client.observe(req ,handler);
+                relation = client.observe(req, handler);
             }
             catch (RuntimeException e ){
-
-                System.err.println(" THERE IS NO CoAP BROKER FOUND");
+                throw e;
             }
-
-            return;
         }
 
+        //call to unsubscribe
         public void unsubscribe() {
             if (this.relation != null){
                 relation.proactiveCancel();

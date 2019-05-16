@@ -1,36 +1,52 @@
-import com.google.appengine.repackaged.org.joda.time.Seconds;
 import org.apache.log4j.BasicConfigurator;
-import org.eclipse.californium.core.CoapClient;
-import org.eclipse.californium.core.CoapHandler;
-import org.eclipse.californium.core.CoapObserveRelation;
-import org.eclipse.californium.core.CoapResponse;
-import org.eclipse.californium.core.coap.CoAP;
-
 import java.io.IOException;
 import java.util.Arrays;
-
-import java.util.concurrent.TimeUnit;
 
 public class main {
 
     public static void main(String[] args) throws  RuntimeException, IOException, InterruptedException {
 
-        String host = "127.0.0.1";
-        int port = 5683;
-        long timeout = 5000;
-        BasicConfigurator.configure();
+        String host = "130.229.148.241";
+        BasicConfigurator.configure();//for logger
 
-        PubSub my = new PubSub(host, port, timeout);
+        /*constructor*/
+        PubSub my = new PubSub(host);
 
-        System.out.println(Arrays.toString(my.get_Topics(my.discover(""))));
-
+        //create
         System.out.println(my.create("ps", "topic1", 40));
-        System.out.println(my.create("ps/topic1", "topic3", 0));
+        System.out.println(my.create("ps", "topic3", 0));
+        System.out.println(my.create("ps/topic1", "topic4", 0));
 
+
+        //Discover
+        System.out.println(my.discover().toString());
+
+        //create again
+        System.out.println(my.create("ps", "topic2", 40));
+        System.out.println(my.create("ps/topic1","topic5", 40));
+
+        //Discover with query
+        System.out.println(my.discover("ct=40"));
+
+        //Publish
+        System.out.println(my.publish("ps/topic3", "Hello", 0));;
+
+        //Read
+        System.out.println(my.read("ps/topic3"));;
+
+        //Remove
+        System.out.println(my.remove("ps/topic5"));
+
+        //getTopics
+        System.out.println(Arrays.toString(my.get_Topics(my.discover())));
+
+        /*Subscribe/Unsub*/
+
+        //create listener
         SubscribeListener listener = new SubscribeListener() {
             @Override
             public void onResponse(String responseText) {
-                System.out.println(responseText);
+                System.out.println("topic3: " + responseText);
             }
 
             @Override
@@ -39,9 +55,15 @@ public class main {
             }
         };
 
-        PubSub.Subscription subscription = my.new Subscription("ps/topic1/topic3", listener);
+        //subscription constructor
+        PubSub.Subscription subscription = my.new Subscription("ps/topic1/topic4", listener);
+        //subscribe
         subscription.subscribe();
+
+        //wait 15 seconds
         Thread.sleep(15000);
+
+        //unsubscribe
         subscription.unsubscribe();
     }
 }
