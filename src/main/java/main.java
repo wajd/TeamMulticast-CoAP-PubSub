@@ -38,7 +38,7 @@ public class main {
         System.out.println(my.remove("ps/topic5"));
 
         //getTopics
-        System.out.println(Arrays.toString(my.get_Topics(my.discover())));
+        System.out.println(Arrays.toString(my.getTopics(my.discover())));
 
         /*Subscribe/Unsub*/
 

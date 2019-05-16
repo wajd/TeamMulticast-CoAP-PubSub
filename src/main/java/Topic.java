@@ -31,6 +31,12 @@ public class Topic {
         }
     }
 
+    public Topic(String name, int ct) {
+        this.name = name;
+        this.ct = ct;
+        this.path = null;
+    }
+
     @Override
     public String toString() {
 
@@ -43,30 +49,24 @@ public class Topic {
         return ct;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
     public void setCt(int ct) {
         this.ct = ct;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public void setPath(String path) {
-        this.path = path;
+    public String getPath() {
+        return path;
     }
 
-    public Topic(String name, int ct) {
-        this.name = name;
-        this.ct = ct;
-        this.path = null;
+    public void setPath(String path) {
+        this.path = path;
     }
 
 

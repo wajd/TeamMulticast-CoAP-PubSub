@@ -5,15 +5,16 @@ import org.eclipse.californium.core.coap.Request;
 import org.eclipse.californium.core.coap.Token;
 import org.eclipse.californium.core.network.RandomTokenGenerator;
 import org.eclipse.californium.core.network.config.NetworkConfig;
+
 import java.io.IOException;
 import java.util.Set;
 
 
 public class PubSub {
 
+    private static final String SCHEME = "coap";
     private String host;
     private int port;
-    private static final String SCHEME = "coap";
     private long timeout;
     private NetworkConfig config = NetworkConfig.createStandardWithoutFile();
 
@@ -23,9 +24,9 @@ public class PubSub {
         this.timeout = 5000;
     }
 
-    public PubSub(String host , int port , long timeout ){
-        this.host = host ;
-        this.port = port ;
+    public PubSub(String host, int port, long timeout) {
+        this.host = host;
+        this.port = port;
         this.timeout = timeout;
     }
 
@@ -41,17 +42,16 @@ public class PubSub {
         return this.port;
     }
 
+    public void setPort(int port) {
+        this.port = port;
+    }
+
     public String getHost() {
         return this.host;
     }
 
-
     public void setHost(String host) {
         this.host = host;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
     }
 
     public long getTimeout() {
@@ -61,9 +61,9 @@ public class PubSub {
     public void setTimeout(long timeout) {
         this.timeout = timeout;
     }
-    /* Returns array of Topic objects and Confirmation Code*/
 
-    public Set<WebLink> discover() throws  IOException, RuntimeException {
+    /* Returns array of Topic objects and Confirmation Code*/
+    public Set<WebLink> discover() throws IOException, RuntimeException {
         CoapClient client = new CoapClient(SCHEME, this.getHost(), this.getPort());
         client.setTimeout(this.timeout);
 
@@ -100,7 +100,7 @@ public class PubSub {
         }
 
         if (response == null) {
-            throw  new IOException("NO RESPONSE, TIMEOUT");
+            throw new IOException("NO RESPONSE, TIMEOUT");
         }
 
         return LinkFormat.parse(response.getResponseText());
@@ -126,7 +126,6 @@ public class PubSub {
             throw e;
         }
 
-
         if (res == null) {
             throw new IOException("INVALID PATH");
         }
@@ -135,7 +134,7 @@ public class PubSub {
     }
 
     /* Returns Confirmation Code */
-    public String publish( String path, String payload , int ct ) throws  IOException, RuntimeException {
+    public String publish(String path, String payload, int ct) throws IOException, RuntimeException {
         CoapClient client = new CoapClient(SCHEME, this.getHost(), this.getPort(), path);
         client.setTimeout(this.timeout);
 
@@ -156,7 +155,7 @@ public class PubSub {
     }
 
     /* Returns Content and Confirmation Code */
-    public String read(String path) throws  IOException, RuntimeException {
+    public String read(String path) throws IOException, RuntimeException {
         CoapClient client = new CoapClient(SCHEME, this.getHost(), this.getPort(), path);
         client.setTimeout(this.timeout);
 
@@ -197,17 +196,15 @@ public class PubSub {
         return response.getCode().toString() + " " + response.getCode().name();
     }
 
-
-    public Topic[] get_Topics(Set<WebLink> links){
-        Topic [] topics = new Topic[links.size()];
+    public Topic[] getTopics(Set<WebLink> links) {
+        Topic[] topics = new Topic[links.size()];
 
         int i = 0;
-        for (WebLink x:links) {
+        for (WebLink x : links) {
             topics[i] = new Topic(x);
             i++;
         }
-
-        return  topics;
+        return topics;
     }
 
     public class Subscription {
@@ -236,7 +233,7 @@ public class PubSub {
             req.setURI(client.getURI());
             req.setObserve();
 
-            config.set(NetworkConfig.Keys.TOKEN_SIZE_LIMIT,4);
+            config.set(NetworkConfig.Keys.TOKEN_SIZE_LIMIT, 4);
             RandomTokenGenerator rand = new RandomTokenGenerator(config);
             Token token = rand.createToken(false);
             req.setToken(token);
@@ -252,22 +249,18 @@ public class PubSub {
                     listener.onError();
                 }
             };
-
-
-            try{
+            try {
                 relation = client.observe(req, handler);
-            }
-            catch (RuntimeException e ){
+            } catch (RuntimeException e) {
                 throw e;
             }
         }
-
         //call to unsubscribe
         public void unsubscribe() {
-            if (this.relation != null){
+            if (this.relation != null) {
                 relation.proactiveCancel();
                 int mid = relation.getCurrent().advanced().getMID();
-                while(relation.getCurrent().advanced().getMID()==mid);
+                while (relation.getCurrent().advanced().getMID() == mid) ;
             }
             if (this.client != null)
                 client.shutdown();
