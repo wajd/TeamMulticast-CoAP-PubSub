@@ -32,17 +32,4 @@ public class PubSubResponse {
     public OptionSet getOptions() {
         return this.coapResponse.getOptions();
     }
-
-    public Topic[] getTopics() {
-        Set<WebLink> links = LinkFormat.parse(this.coapResponse.getResponseText());
-        Topic[] topics = new Topic[links.size()];
-
-        int i = 0;
-        for (WebLink x : links) {
-            topics[i] = new Topic(x);
-            i++;
-        }
-        return topics;
-    }
-
 }

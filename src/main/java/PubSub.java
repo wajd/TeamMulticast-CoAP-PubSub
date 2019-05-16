@@ -68,7 +68,6 @@ public class PubSub {
         return discover("");
     }
 
-
     public PubSubResponse discover(String query) throws IOException, RuntimeException {
         Request discover = Request.newGet();
         discover.getOptions().setUriPath(".well-known/core?" + query);
@@ -175,7 +174,6 @@ public class PubSub {
 
         return new PubSubResponse(res);
     }
-
 
     public class Subscription {
         private CoapClient client;
