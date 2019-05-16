@@ -1,5 +1,5 @@
 public interface SubscribeListener {
-    void onResponse(String responseText);
+    void onResponse(PubSubResponse pubSubResponse);
 
     void onError();
 }

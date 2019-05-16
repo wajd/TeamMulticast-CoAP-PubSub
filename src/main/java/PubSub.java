@@ -209,7 +209,7 @@ public class PubSub {
             CoapHandler handler = new CoapHandler() {
                 @Override
                 public void onLoad(CoapResponse coapResponse) {
-                    listener.onResponse(coapResponse.getResponseText());
+                    listener.onResponse(new PubSubResponse(coapResponse));
                 }
 
                 @Override
