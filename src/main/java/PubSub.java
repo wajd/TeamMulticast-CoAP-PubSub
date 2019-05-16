@@ -1,13 +1,14 @@
-import org.eclipse.californium.core.*;
+import org.eclipse.californium.core.CoapClient;
+import org.eclipse.californium.core.CoapHandler;
+import org.eclipse.californium.core.CoapObserveRelation;
+import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.CoAP;
-import org.eclipse.californium.core.coap.LinkFormat;
 import org.eclipse.californium.core.coap.Request;
 import org.eclipse.californium.core.coap.Token;
 import org.eclipse.californium.core.network.RandomTokenGenerator;
 import org.eclipse.californium.core.network.config.NetworkConfig;
 
 import java.io.IOException;
-import java.util.Set;
 
 
 public class PubSub {
@@ -67,7 +68,6 @@ public class PubSub {
         return discover("");
     }
 
-
     public CoapResponse discover(String query) throws IOException, RuntimeException {
         Request discover = Request.newGet();
         discover.getOptions().setUriPath(".well-known/core?" + query);
@@ -81,13 +81,12 @@ public class PubSub {
         } catch (RuntimeException e) {
             throw e;
         }
-
         if (response == null) {
             throw new IOException("NO RESPONSE, TIMEOUT");
         }
-
         return response;
     }
+
     /* Returns topic and Confirmation Code */
     public CoapResponse create(String path, String name, int ct) throws IOException, RuntimeException {
 
@@ -111,7 +110,6 @@ public class PubSub {
         if (res == null) {
             throw new IOException("INVALID PATH");
         }
-
         return res;
     }
 
@@ -130,9 +128,7 @@ public class PubSub {
 
         if (res == null) {
             throw new IOException(" INVALID PATH ");
-
         }
-
         return res;
     }
 
@@ -144,7 +140,6 @@ public class PubSub {
         CoapResponse res = null;
         try {
             res = client.get();
-
         } catch (RuntimeException e) {
             throw e;//Broker not found
         }
@@ -152,7 +147,6 @@ public class PubSub {
         if (res == null) {
             throw new IOException(" PATH IS NOT VALID");
         }
-
         return res;
     }
 
@@ -161,7 +155,6 @@ public class PubSub {
 
         CoapClient client = new CoapClient(SCHEME, this.getHost(), this.getPort(), path);
         client.setTimeout(this.timeout);
-
         CoapResponse res = null;
         try {
             res = client.delete();
@@ -170,23 +163,10 @@ public class PubSub {
             throw e;
         }
 
-
         if (res == null) {
             throw new IOException();
         }
-
         return res;
-    }
-
-    public Topic[] getTopics(Set<WebLink> links) {
-        Topic[] topics = new Topic[links.size()];
-
-        int i = 0;
-        for (WebLink x : links) {
-            topics[i] = new Topic(x);
-            i++;
-        }
-        return topics;
     }
 
     public class Subscription {
@@ -237,6 +217,7 @@ public class PubSub {
                 throw e;
             }
         }
+
         //call to unsubscribe
         public void unsubscribe() {
             if (this.relation != null) {
