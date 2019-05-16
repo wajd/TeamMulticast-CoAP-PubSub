@@ -63,31 +63,14 @@ public class PubSub {
     }
 
     /* Returns array of Topic objects and Confirmation Code*/
-    public Set<WebLink> discover() throws IOException, RuntimeException {
-        CoapClient client = new CoapClient(SCHEME, this.getHost(), this.getPort());
-        client.setTimeout(this.timeout);
-
-        Set<WebLink> weblinks;
-        try {
-            weblinks = client.discover("?rt=core.ps");
-        } catch (RuntimeException e) {
-            throw e;
-        }
-
-        if (weblinks == null) {
-            throw new IOException("NO RESPONSE, TIMEOUT");
-        }
-
-        if (weblinks.size() == 0) {
-            throw new IllegalArgumentException("CT IS NOT 40");
-        }
-
-        return weblinks;
+    public CoapResponse discover() throws IOException, RuntimeException {
+        return discover("");
     }
 
-    public Set<WebLink> discover(String query) throws IOException, RuntimeException {
+
+    public CoapResponse discover(String query) throws IOException, RuntimeException {
         Request discover = Request.newGet();
-        discover.getOptions().setUriPath(".well-known/core" + query);
+        discover.getOptions().setUriPath(".well-known/core?" + query);
 
         CoapClient client = new CoapClient(SCHEME, this.getHost(), this.getPort());
         client.setTimeout(this.timeout);
@@ -103,9 +86,8 @@ public class PubSub {
             throw new IOException("NO RESPONSE, TIMEOUT");
         }
 
-        return LinkFormat.parse(response.getResponseText());
+        return response;
     }
-
     /* Returns topic and Confirmation Code */
     public CoapResponse create(String path, String name, int ct) throws IOException, RuntimeException {
 

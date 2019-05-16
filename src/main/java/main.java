@@ -19,14 +19,19 @@ public class main {
 
 
         //Discover
-        System.out.println(my.discover().toString());
+        System.out.println(my.discover().getResponseText());
 
         //create again
         System.out.println(my.create("ps", "topic2", 40).getResponseText());
         System.out.println(my.create("ps/topic1","topic5", 40).getCode().name());
 
+        System.out.println("Discover");
+
         //Discover with query
-        System.out.println(my.discover("?ct=40"));
+        System.out.println(my.discover("rt=core.ps").getResponseText());
+        System.out.println(my.discover( "ct=40").getResponseText());
+
+
 
 //        //Publish
 //        System.out.println(my.publish("ps/topic3", "Hello", 0).getCode().name());
