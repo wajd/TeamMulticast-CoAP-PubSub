@@ -17,7 +17,13 @@ public class Converter {
     /*helper functions for Set<WebLink>*/
 
     public static WebLink[] getArray(Set<WebLink> webLinks) {
-        return (WebLink[]) webLinks.toArray();
+        WebLink[] links = new WebLink[webLinks.size()];
+        int i = 0;
+        for (WebLink w: webLinks) {
+            links[i] = w;
+            i++;
+        }
+        return links;
     }
 
     public static Set<WebLink> extractAllTopics(Set<WebLink> webLinks) {

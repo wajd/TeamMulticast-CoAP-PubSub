@@ -1,6 +1,7 @@
 import org.eclipse.californium.core.WebLink;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.Set;
 
 public class main {
@@ -35,11 +36,12 @@ public class main {
         Set<WebLink> links = Converter.getWebLinks(my.discover());
         System.out.println(links.toString());
 
-//        System.out.println("weblinks getarray");
-//        WebLink[] weblinkArray = Converter.getArray(links);
-//
-//        for(WebLink w: weblinkArray)
-//            System.out.println(w.toString());
+        System.out.println("weblinks getarray");
+        WebLink[] weblinkArray = Converter.getArray(links);
+
+        for(int i=0; i<weblinkArray.length;i++){
+            System.out.println(weblinkArray[i]);
+        }
 
         System.out.println("Extract all topics");
         Set<WebLink> allWebLinks = Converter.extractAllTopics(links);
