@@ -48,6 +48,10 @@ public class Converter {
         return webLink;
     }
 
+    public static String getUri(WebLink webLink) {
+        return cleanUri(webLink.getURI());
+    }
+
     public static int getCT(WebLink webLink) {
         return Integer.parseInt(webLink.getAttributes().getContentTypes().get(0));
     }

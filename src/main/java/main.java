@@ -69,6 +69,9 @@ public class main {
         for (WebLink w: subtopics)
             System.out.println(w.toString());
 
+        System.out.println("TTEEFGGFDF");
+        System.out.println(Converter.getUri(weblinkArray[0]));
+
 
 //        //Publish
 //        System.out.println("Publish");
