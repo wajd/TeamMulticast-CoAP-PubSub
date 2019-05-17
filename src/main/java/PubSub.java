@@ -189,6 +189,14 @@ public class PubSub {
             this.client = null;
         }
 
+        public CoapHandler getHandler() {
+            return handler;
+        }
+
+        public void setHandler(CoapHandler handler) {
+            this.handler = handler;
+        }
+
         //call this method to subscribe, can use it to subscribe to same topic again
         public void subscribe() throws RuntimeException {
 
