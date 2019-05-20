@@ -78,9 +78,9 @@ public class PubSub {
     }
 
     /* Returns topic and Confirmation Code */
-    public CoapResponse create(String path, String name, int ct) throws RuntimeException {
+    public CoapResponse create(String name, int ct, String... uri) throws RuntimeException {
 
-        CoapClient client = new CoapClient(SCHEME, this.getHost(), this.getPort(), path);
+        CoapClient client = new CoapClient(SCHEME, this.getHost(), this.getPort(), uri);
         client.setTimeout(this.timeout);
 
         StringBuilder sb = new StringBuilder().append("<").append(name).append(">;ct=").append(ct);
@@ -96,8 +96,8 @@ public class PubSub {
     }
 
     /* Returns Confirmation Code */
-    public CoapResponse publish(String path, String payload, int ct) throws RuntimeException {
-        CoapClient client = new CoapClient(SCHEME, this.getHost(), this.getPort(), path);
+    public CoapResponse publish(String payload, int ct, String... uri) throws RuntimeException {
+        CoapClient client = new CoapClient(SCHEME, this.getHost(), this.getPort(), uri);
         client.setTimeout(this.timeout);
 
         CoapResponse res = client.put(payload, ct);
@@ -106,8 +106,8 @@ public class PubSub {
     }
 
     /* Returns Content and Confirmation Code */
-    public CoapResponse read(String path) throws RuntimeException {
-        CoapClient client = new CoapClient(SCHEME, this.getHost(), this.getPort(), path);
+    public CoapResponse read(String... uri) throws RuntimeException {
+        CoapClient client = new CoapClient(SCHEME, this.getHost(), this.getPort(), uri);
         client.setTimeout(this.timeout);
 
         CoapResponse res = client.get();
@@ -116,9 +116,9 @@ public class PubSub {
     }
 
     /* Returns Confirmation Code */
-    public CoapResponse remove(String path) throws RuntimeException {
+    public CoapResponse remove(String... uri) throws RuntimeException {
 
-        CoapClient client = new CoapClient(SCHEME, this.getHost(), this.getPort(), path);
+        CoapClient client = new CoapClient(SCHEME, this.getHost(), this.getPort(), uri);
         client.setTimeout(this.timeout);
         CoapResponse res = client.delete();
 
@@ -128,12 +128,12 @@ public class PubSub {
     public class Subscription {
         private CoapClient client;
         private CoapObserveRelation relation;
-        private String path;
+        private String[] uri;
         private CoapHandler handler;
 
         //Constructor, does not subscribe
-        public Subscription(String path, CoapHandler handler) {
-            this.path = path;
+        public Subscription(CoapHandler handler, String... uri) {
+            this.uri = uri;
             this.handler = handler;
             this.relation = null;
             this.client = null;
@@ -152,7 +152,7 @@ public class PubSub {
 
             Request req = new Request(CoAP.Code.GET);
 
-            client = new CoapClient(SCHEME, getHost(), getPort(), path);
+            client = new CoapClient(SCHEME, getHost(), getPort(), uri);
             client.useExecutor();
             client.setTimeout(timeout);
 
