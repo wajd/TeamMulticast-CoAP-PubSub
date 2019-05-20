@@ -14,6 +14,10 @@ public class Converter {
         return LinkFormat.parse(response.getResponseText());
     }
 
+    public static Set<WebLink> getAllWebLinks(CoapResponse response) {
+        return extractAllWebLinks(getWebLinks(response));
+    }
+
     /*helper functions for Set<WebLink>*/
 
     public static WebLink[] getArray(Set<WebLink> webLinks) {
@@ -26,7 +30,7 @@ public class Converter {
         return links;
     }
 
-    public static Set<WebLink> extractAllTopics(Set<WebLink> webLinks) {
+    public static Set<WebLink> extractAllWebLinks(Set<WebLink> webLinks) {
         Set<WebLink> topics = new ConcurrentSkipListSet();
         WebLink p;
         for(WebLink w: webLinks) {
