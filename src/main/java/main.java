@@ -9,7 +9,7 @@ public class main {
 
     public static void main(String[] args) throws  RuntimeException, IOException, InterruptedException {
 
-        String host = "130.229.141.239";
+        String host = "127.0.0.1";
 //        BasicConfigurator.configure();//for logger
 
         /*constructor*/
@@ -28,17 +28,17 @@ public class main {
         System.out.println(my.create("ps/topic1","topic5", 40).getResponseText());
 
         //Discover with query
-        System.out.println("Discover w query ct=40");
-        System.out.println(Converter.getWebLinks(my.discover("ct=40")));
+//        System.out.println("Discover w query ct=40");
+//        System.out.println(Converter.getWebLinks(my.discover("ct=40")));
 
         //Discover
-        System.out.println("Discover");
+//        System.out.println("Discover");
 
         Set<WebLink> links = Converter.getAllWebLinks(my.discover());
-        System.out.println(links.toString());
 
-        for(WebLink w: links)
-            System.out.println(w.getURI().toString());
+     //   System.out.println(links.toString());
+
+        System.out.println(Converter.sort(links).toString());
 
 //        System.out.println("weblinks getarray");
 //        WebLink[] weblinkArray = Converter.getArray(links);

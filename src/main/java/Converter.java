@@ -38,6 +38,36 @@ public class Converter {
         return topics;
     }
 
+    public static WebLink[] sort(Set<WebLink> webLinks){
+        WebLink[] array = getArray(webLinks);
+        for(int i = 0; i<array.length-1; i++) {
+            for (int j = i+1; j<array.length; j++) {
+                if(compare(array[i], array[j])) {
+                    WebLink temp = array[i];
+                    array[i] = array[j];
+                    array[j] = temp;
+                }
+            }
+        }
+        return array;
+    }
+
+    public static boolean compare(WebLink w1, WebLink w2){
+        if(countSlash(w1)>countSlash(w2))
+            return true;
+        else
+            return false;
+    }
+
+    public static int countSlash(WebLink w){
+        int count = 0;
+        for(int i = 0; i<w.toString().length(); i++){
+            if(w.toString().charAt(i)=='/')
+                count++;
+        }
+        return count;
+    }
+
     /*helper functions for WebLink*/
 
     public static WebLink makeWebLink(String uri, int ct) {
