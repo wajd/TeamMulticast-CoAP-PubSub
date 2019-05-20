@@ -21,13 +21,7 @@ public class Converter {
     /*helper functions for Set<WebLink>*/
 
     public static WebLink[] getArray(Set<WebLink> webLinks) {
-        WebLink[] links = new WebLink[webLinks.size()];
-        int i = 0;
-        for (WebLink w: webLinks) {
-            links[i] = w;
-            i++;
-        }
-        return links;
+        return webLinks.toArray(new WebLink[webLinks.size()]);
     }
 
     public static Set<WebLink> extractAllWebLinks(Set<WebLink> webLinks) {
