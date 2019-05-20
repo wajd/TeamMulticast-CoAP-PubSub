@@ -51,7 +51,14 @@ public class Converter {
     }
 
     public static int getCT(WebLink webLink) {
-        return Integer.parseInt(webLink.getAttributes().getContentTypes().get(0));
+        String cts = webLink.getAttributes().getContentTypes().get(0);
+        int ct;
+        try {
+            ct = Integer.parseInt(cts.substring(0,1));
+        } catch (NumberFormatException e) {
+             ct = Integer.parseInt(cts.substring(0,0));
+        }
+        return ct;
     }
 
     public static void setCT(WebLink webLink, int ct) {
