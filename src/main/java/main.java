@@ -3,7 +3,7 @@ public class main {
 
     public static void main(String[] args) throws  RuntimeException{
 
-        String host = "130.229.141.239";
+        String host = "";
 //        BasicConfigurator.configure();//for logger
 
         /*constructor*/
