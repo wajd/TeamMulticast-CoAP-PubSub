@@ -87,9 +87,11 @@ public class PubSub {
         String payload = sb.toString();
 
         Request req = Request.newPost();
-        req.setPayload(payload).getOptions().setContentFormat(ct);
+        req.setPayload(payload);
+        req.getOptions().setContentFormat(ct);
 
         CoapResponse res = client.advanced(req);
+
         return res;
     }
 
