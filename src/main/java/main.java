@@ -2,12 +2,9 @@ import org.apache.log4j.BasicConfigurator;
 import org.eclipse.californium.core.CoapHandler;
 import org.eclipse.californium.core.CoapResponse;
 
-import java.io.IOException;
-import java.util.Arrays;
-
 public class main {
 
-    public static void main(String[] args) throws  RuntimeException, IOException, InterruptedException {
+    public static void main(String[] args) throws  RuntimeException{
 
         String host = "127.0.0.1";
 //        BasicConfigurator.configure();//for logger

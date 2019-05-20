@@ -8,9 +8,6 @@ import org.eclipse.californium.core.coap.Token;
 import org.eclipse.californium.core.network.RandomTokenGenerator;
 import org.eclipse.californium.core.network.config.NetworkConfig;
 
-import java.io.IOException;
-
-
 public class PubSub {
 
     private static final String SCHEME = "coap";
@@ -64,33 +61,24 @@ public class PubSub {
     }
 
     /* Returns array of Topic objects and Confirmation Code*/
-    public CoapResponse discover() throws IOException, RuntimeException {
+    public CoapResponse discover() throws  RuntimeException {
         return discover("");
     }
 
-    public CoapResponse discover(String query) throws IOException, RuntimeException {
+    public CoapResponse discover(String query) throws RuntimeException {
         Request discover = Request.newGet();
         discover.getOptions().setUriPath(".well-known/core?" + query);
 
         CoapClient client = new CoapClient(SCHEME, this.getHost(), this.getPort());
         client.setTimeout(this.timeout);
 
-        CoapResponse response;
-        try {
-            response = client.advanced(discover);
-        } catch (RuntimeException e) {
-            throw e;
-        }
-        if (response == null) {
-            throw new IOException("NO RESPONSE, TIMEOUT");
-        }
-
+        CoapResponse response = client.advanced(discover);
 
         return response;
     }
 
     /* Returns topic and Confirmation Code */
-    public CoapResponse create(String path, String name, int ct) throws IOException, RuntimeException {
+    public CoapResponse create(String path, String name, int ct) throws RuntimeException {
 
         CoapClient client = new CoapClient(SCHEME, this.getHost(), this.getPort(), path);
         client.setTimeout(this.timeout);
@@ -102,75 +90,37 @@ public class PubSub {
         req.setPayload(payload);
         req.getOptions().setContentFormat(ct);
 
-        CoapResponse res = null;
-        try {
-            res = client.advanced(req);
-        } catch (RuntimeException e) {
-            throw e;
-        }
-
-        if (res == null) {
-            throw new IOException("INVALID PATH");
-        }
+        CoapResponse res = client.advanced(req);
 
         return res;
     }
 
     /* Returns Confirmation Code */
-    public CoapResponse publish(String path, String payload, int ct) throws IOException, RuntimeException {
+    public CoapResponse publish(String path, String payload, int ct) throws RuntimeException {
         CoapClient client = new CoapClient(SCHEME, this.getHost(), this.getPort(), path);
         client.setTimeout(this.timeout);
 
-        CoapResponse res = null;
-        try {
-            res = client.put(payload, ct);
-
-        } catch (RuntimeException e) {
-            throw e;
-        }
-
-        if (res == null) {
-            throw new IOException(" INVALID PATH ");
-        }
+        CoapResponse res = client.put(payload, ct);
 
         return res;
     }
 
     /* Returns Content and Confirmation Code */
-    public CoapResponse read(String path) throws IOException, RuntimeException {
+    public CoapResponse read(String path) throws RuntimeException {
         CoapClient client = new CoapClient(SCHEME, this.getHost(), this.getPort(), path);
         client.setTimeout(this.timeout);
 
-        CoapResponse res = null;
-        try {
-            res = client.get();
-        } catch (RuntimeException e) {
-            throw e;//Broker not found
-        }
-
-        if (res == null) {
-            throw new IOException(" PATH IS NOT VALID");
-        }
+        CoapResponse res = client.get();
 
         return res;
     }
 
     /* Returns Confirmation Code */
-    public CoapResponse remove(String path) throws IOException, RuntimeException {
+    public CoapResponse remove(String path) throws RuntimeException {
 
         CoapClient client = new CoapClient(SCHEME, this.getHost(), this.getPort(), path);
         client.setTimeout(this.timeout);
-        CoapResponse res = null;
-        try {
-            res = client.delete();
-
-        } catch (RuntimeException e) {
-            throw e;
-        }
-
-        if (res == null) {
-            throw new IOException();
-        }
+        CoapResponse res = client.delete();
 
         return res;
     }
@@ -214,11 +164,7 @@ public class PubSub {
             Token token = rand.createToken(false);
             req.setToken(token);
 
-            try {
-                relation = client.observe(req, handler);
-            } catch (RuntimeException e) {
-                throw e;
-            }
+            relation = client.observe(req, handler);
         }
 
         //call to unsubscribe
