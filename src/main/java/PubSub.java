@@ -203,13 +203,34 @@ public class PubSub {
         return res;
     }
 
+
+    /**
+     * The Subscription class can be used to asynchronously subscribe to a given topic uri
+     * It can be reused for the same uri while also giving it a new {@link CoapHandler} to handle the
+     * asynchronous CoapResponse returned from the broker
+     *
+     * The uri cannot be changed once set, but the CoapHanlder can be.
+     */
     public class Subscription {
+        /** the client */
         private CoapClient client;
+        /** the observe relation */
         private CoapObserveRelation relation;
+        /** the uri of subscribed topic */
         private String[] uri;
+        /** the listener for returned CoapResponse */
         private CoapHandler handler;
 
-        //Constructor, does not subscribe
+        /**
+         * Constructs a A Subscription instance that allows subscription to a given
+         * topic uri string and takes a a CoapHandler to handle the returned response
+         *
+         * A Constructed Susbcription instance does not automatically subscribe
+         * you must call #subscribe().
+         *
+         * @param handler CoapHandler
+         * @param uri String or String[]
+         */
         public Subscription(CoapHandler handler, String... uri) {
             this.uri = uri;
             this.handler = handler;
@@ -217,15 +238,30 @@ public class PubSub {
             this.client = null;
         }
 
+        /**
+         * Gets the current handler assigned to Subscription instance
+         *
+         * @return a CoapHandler
+         */
         public CoapHandler getHandler() {
             return handler;
         }
 
+        /**
+         * Sets a new CoapHandler for the Subscription instance
+         *
+         * @param handler CoapHandler
+         */
         public void setHandler(CoapHandler handler) {
             this.handler = handler;
         }
 
-        //call this method to subscribe, can use it to subscribe to same topic again
+        /**
+         * subscribes to the uri of the Subscription instance and runs
+         * the CoapHandler #onLoad when it gets a CoapResponse
+         *
+         * @throws RuntimeException when the request times out
+         */
         public void subscribe() throws RuntimeException {
 
             Request req = new Request(CoAP.Code.GET);
@@ -245,7 +281,10 @@ public class PubSub {
             relation = client.observe(req, handler);
         }
 
-        //call to unsubscribe
+        /**
+         * Unsubscribes from the uri of the Subscription instance
+         * and shuts down the client
+         */
         public void unsubscribe() {
             if (this.relation != null) {
                 relation.proactiveCancel();
