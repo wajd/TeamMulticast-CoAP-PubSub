@@ -93,7 +93,7 @@ public class PubSub {
 
     /**
      * Sets the timeout of the PubSub instance
-     * Setting this property to 0 will result in methods waiting infinitely.
+     * Setting this property to 0 will result in methods waiting infinitely
      * @param timeout time the client waits for response
      */
     public void setTimeout(long timeout) {
@@ -110,7 +110,8 @@ public class PubSub {
     }
 
     /**
-     * Sends a synchronous GET request to the broker with a specified query
+     * Sends a synchronous GET request to the broker with a specified
+     * To discover whether the broker supports CoAP PubSub protocol "rt=core.ps" query can be sent
      * @param query String e.g. ct=40
      * @return CoapResponse which contains the topics with the attributes specified by the query
      * @throws RuntimeException when the request times out
@@ -129,7 +130,7 @@ public class PubSub {
 
     /**
      * Sends a synchronous POST request to the broker which creates a topic at the broker
-     * The topic has to be specified by name, ct and path uri.
+     * The topic has to be specified by name, ct and path uri
      * @param name String is the name of the topic
      * @param ct int is the content type of the topic (ct=40 for parent folder, ct=0 for plain text)
      * @param uri String or String[] is the path where the topic should be created (e.g. ps/t1/t2 or {[ps],[t1],[t2]})
@@ -155,8 +156,8 @@ public class PubSub {
 
     /**
      * Sends a synchronous PUT request to the broker which publishes data to a topic
-     * The topic is specified by path uri and ct. Ct of the topic and the request
-     * has to match for data to be published.
+     * The topic is specified by path uri and ct
+     * ct of the topic and the request has to match for data to be published
      * @param payload String is data to be published
      * @param ct int is the content type of the data (has to match ct of the topic)
      * @param uri String or String[] is the path of the topic to which data should be published
@@ -175,7 +176,7 @@ public class PubSub {
     /**
      * Sends a synchronous GET request to the broker which retrieves data from the topic
      * @param uri String or String[] is the path of the topic from which the data should be read
-     * @return CoapResponse which contains the broker's response to our request i.e. content, response code,...
+     * @return CoapResponse which contains the broker's response to our request i.e. content, response code...
      * @throws RuntimeException when the request times out
      */
     public CoapResponse read(String... uri) throws RuntimeException {
@@ -188,8 +189,8 @@ public class PubSub {
     }
 
     /**
-     * Sends a synchronous DELETE request to the broker which removes the specified topic from the broker.
-     * If the topic is a parent topic, the broker removes all of its children.
+     * Sends a synchronous DELETE request to the broker which removes the specified topic from the broker
+     * If the topic is a parent topic, the broker removes all of its children
      * @param uri String or String[] is the path of the topic which should be removed
      * @throws RuntimeException when the request times out
      */
