@@ -8,6 +8,22 @@ import org.eclipse.californium.core.coap.Token;
 import org.eclipse.californium.core.network.RandomTokenGenerator;
 import org.eclipse.californium.core.network.config.NetworkConfig;
 
+
+/**
+ * A PubsSub instance can be used to establish a Publish Subscribe client
+ * according to the IETF Publish-Subscribe Model for the Constrained Application
+ * Protocol (CoAP) RFC draft
+ *
+ * it allows you to connect to a broker that supports the model so that you:
+ * Discover available topics,
+ * Create new topics,
+ * Publish to available topics,
+ * Read from available topics
+ * Remove topics,
+ * Subscribe to available topics
+ *
+ * TODO: add support for querying within specific topics
+ */
 public class PubSub {
 
     private static final String SCHEME = "coap";
