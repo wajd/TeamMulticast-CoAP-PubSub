@@ -10,6 +10,8 @@ You can follow along our Project progress here: https://sites.google.com/view/te
 
 You can see the repository for the Android app here: https://github.com/ihilal/Noisy
 
+This library is meant to be used alongside The Californium Library.
+
 ## Available functionality:
 - Discover: allows you to find a list of available topics on the broker
     - You may provide a query to limit the list you get back
@@ -21,6 +23,10 @@ You can see the repository for the Android app here: https://github.com/ihilal/N
 - Subscription: given a topic uri and a listener (CoapHandler), it allows you to:
     - Subscribe to the given topic
     - Unsubscribe from the given topic
+- Two classes available to help with using PubSub core functions using different styles:
+    - Converter
+    - Topic
+    - check their documentation for how to use them
 
 ## Installation:
 - First, add Californium dependencies to your project: https://github.com/eclipse/californium/tree/2.0.0-M14
@@ -29,6 +35,48 @@ You can see the repository for the Android app here: https://github.com/ihilal/N
     - follow instructions on https://jitpack.io/#wajd/TeamMulticast-CoAP-PubSub and use the Tag 1.0 for your build system
     - Alternatively, you may compile it to a Jar file yourself and use that 
     - Or copy paste the project into your project directory
+
+##Examples
+```
+PubSub pubsub = new PubSub("127.0.0.1"); 
+OR
+PubSub pubsub = new PubSub("127.0.0.1", 5683, 5000); 
+
+CoapResponse response = pubsub.discover("rt=core.ps");
+
+response = pubsub.create("topic", 40, "ps");
+response = pubsub.create("topic1", 0, "ps/topic/");
+
+response = pubsub.discover();
+
+Set<WebLink> topics = Converter.getWebLinks(response);
+OR
+ArrayList<Topic> at = Topic.makeArrayList(LinkFormat.parse(response.getResponseText()));
+
+response = pubsub.publish("content", 0, "ps/topic/topic1");
+
+String content = pubsub.read("ps/topic/topic1").getResponseText();
+
+CoapHandler handler = new CoapHandler() {
+    @Override
+    public void onLoad(CoapResponse coapResponse) {
+        System.out.println("topic content: " + coapResponse.getResponseText());
+    }
+
+    @Override
+    public void onError() {
+        System.out.println("ERROR");
+    }
+};
+
+PubSub.Subscription subscription = pubsub.new Subscription(handler, "ps/topic/topic1");
+
+subscription.subscribe();
+
+subscription.unsubscribe();
+
+response = pubsub.remove("ps/topic/topic1");
+```
 
 ## Support: 
 Open an issue here on GitHub
