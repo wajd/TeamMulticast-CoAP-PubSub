@@ -28,12 +28,14 @@ public class Topic {
         this.ct = ct;
     }
 
-    public static void makeArrayList(Set<WebLink> swl, ArrayList<Topic> at) {
+    public static ArrayList<Topic> makeArrayList(Set<WebLink> swl) {
+        ArrayList<Topic> at = new ArrayList<>();
         for (WebLink wl : swl) {
             Topic t = new Topic(wl);
             t.getTopics(t, at);
         }
         Collections.sort(at, new TopicComparator());
+        return at;
     }
 
     public void getTopics(Topic topic, ArrayList<Topic> at) {
@@ -55,7 +57,7 @@ public class Topic {
     }
 
     public String toString() {
-        return this.getPathString() + "                 |ct: " + this.ct;
+        return this.getPathString() + "\t\t\t\t\t\t |ct: " + this.ct;
     }
 
     public Topic getParent() {
