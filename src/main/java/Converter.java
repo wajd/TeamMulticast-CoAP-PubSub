@@ -106,14 +106,8 @@ public class Converter {
      * @return an int ContentType
      */
     public static int getCT(WebLink webLink) {
-        String cts = webLink.getAttributes().getContentTypes().get(0);
-        int ct;
-        try {
-            ct = Integer.parseInt(cts.substring(0,1));
-        } catch (NumberFormatException e) {
-             ct = Integer.parseInt(cts.substring(0,0));
-        }
-        return ct;
+
+        return Integer.parseInt(webLink.getAttributes().getContentTypes().get(0));
     }
 
     /**
@@ -194,7 +188,7 @@ public class Converter {
      * @return a String name
      */
     public static String getName (String uri) {
-        return cleanUri(uri).substring(uri.lastIndexOf('/')+1);
+        return cleanUri(uri).substring(uri.lastIndexOf('/'));
     }
 
     /**
