@@ -32,7 +32,7 @@ This library is meant to be used alongside The Californium Library.
 - First, add Californium dependencies to your project: https://github.com/eclipse/californium/tree/2.0.0-M14
     - Should use the M14 tag
 - Then:
-    - follow instructions on https://jitpack.io/#wajd/TeamMulticast-CoAP-PubSub and use the Tag 1.0 for your build system
+    - follow instructions on https://jitpack.io/#wajd/TeamMulticast-CoAP-PubSub and use the latest available version Tag/release for your build system
     - Alternatively, you may compile it to a Jar file yourself and use that 
     - Or copy paste the project into your project directory
 
